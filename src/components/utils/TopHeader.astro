@@ -1,0 +1,33 @@
+---
+import InventarioButtons from "../buttons/InventarioButtons.astro";
+
+interface Props {
+    title: string;
+    subtitle: string;
+    section: string;
+}
+
+const { title, subtitle, section } = Astro.props as Props;
+
+const buttons: Record<string, any> = {
+    Inventario: InventarioButtons,
+};
+
+const CurrentButton = buttons[section];
+---
+
+<div
+    class="flex justify-between items-start mb-(--spacing-xl) bg-(--bg-primary) p-(--spacing-md) rounded-xl shadow-(--shadow-sm) border border-(--border-color)"
+>
+    <div>
+        <h1
+            class="text-[2rem] font-bold text-(--text-primary) mb-(--spacing-xs)"
+        >
+            {title}
+        </h1>
+        <p class="text-(--text-secondary) text-[1rem]">{subtitle}</p>
+    </div>
+    <div class="flex gap-(--spacing-md)">
+        {CurrentButton && <CurrentButton />}
+    </div>
+</div>

@@ -1,0 +1,154 @@
+---
+interface Props {
+    title: string;
+    value: string;
+    icon: string;
+    color: string;
+}
+
+const { title, value, icon, color } = Astro.props as Props;
+
+const icons: Record<string, string> = {
+    box: "/icons/box-open-full.webp",
+    ballot: "/icons/ballot.webp",
+    down: "/icons/chart-arrow-down.webp",
+    stock: "/icons/out-of-stock.webp",
+};
+
+const iconPath = icons[icon];
+
+const iconColors: Record<string, string> = {
+    blue: "blue",
+    orange: "orange",
+    green: "green",
+    red: "red",
+};
+
+const iconColor = "stat-icon " + iconColors[color];
+---
+
+<div class="stat-card">
+    <div class="stat-header">
+        <div class={iconColor}>
+            <img class="w-6 h-6" src={iconPath} alt="icon" />
+        </div>
+    </div>
+    <div class="stat-content">
+        <h3 class="stat-value" id="totalProducts">{value}</h3>
+        <p class="stat-label">{title}</p>
+    </div>
+</div>
+
+<style>
+    .stat-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-xl);
+        padding: var(--spacing-lg);
+        transition: all var(--transition-fast);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+            90deg,
+            var(--primary-color),
+            var(--accent-color)
+        );
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: transform var(--transition-fast);
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+
+    .stat-icon.blue {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+
+    .stat-icon.orange {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .stat-icon.green {
+        background: linear-gradient(135deg, #10b981, #047857);
+    }
+
+    .stat-icon.red {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .stat-icon svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 2;
+    }
+
+    .stat-content {
+        text-align: left;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-top: var(--spacing-xs);
+    }
+
+    .stat-trend.positive {
+        color: var(--success-color);
+    }
+
+    .stat-trend.negative {
+        color: var(--error-color);
+    }
+
+    .stat-trend svg {
+        width: 14px;
+        height: 14px;
+    }
+</style>

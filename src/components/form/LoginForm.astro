@@ -1,0 +1,313 @@
+---
+import { actions } from 'astro:actions';
+---
+
+<div class="bg-inherit transition-all duration-300">
+    <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-primary mb-2">Iniciar Sesión</h2>
+        <p class="text-sm text-secondary leading-6">
+            Ingresa tus credenciales para acceder
+        </p>
+    </div>
+
+    <form class="flex flex-col gap-(--spacing-lg)" id="loginForm" action={actions.auth.loginAction}>
+        <div class="flex flex-col gap-(--spacing-sm)">
+            <label class="text-sm font-semibold text-primary"
+                >Correo electrónico</label
+            >
+            <div class="relative flex items-center">
+                <svg
+                    class="absolute left-4 w-[18px] h-[18px] text-muted z-1 transition-colors stroke-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                    ></path>
+                </svg>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    name="loginEmail"
+                    class="form-input"
+                    placeholder="tu@email.com"
+                    required
+                />
+            </div>
+            <div class="form-error" id="loginEmailError"></div>
+        </div>
+
+        <div class="flex flex-col gap-(--spacing-sm)">
+            <label class="text-sm font-semibold text-primary">Contraseña</label>
+            <div class="relative flex items-center">
+                <svg
+                    class="absolute left-4 w-[18px] h-[18px] text-muted z-1 transition-colors stroke-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                    ></path>
+                </svg>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    name="loginPassword"
+                    class="form-input"
+                    placeholder="••••••••"
+                    required
+                />
+                <button
+                    type="button"
+                    class="password-toggle"
+                    onclick="togglePasswordVisibility('loginPassword')"
+                >
+                    <svg
+                        class="eye-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                    </svg>
+                    <svg
+                        class="eye-off-icon"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        style="display: none;"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"
+                        ></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="form-error" id="loginPasswordError"></div>
+        </div>
+
+        <div class="flex justify-between items-center">
+            <label class="checkbox-container">
+              <input type="checkbox" id="rememberMe">
+              <span class="checkmark"></span>
+              <span class="checkbox-text">Recordarme</span>
+            </label>
+            <button id="recoveryBtn" type="button" class="bg-none border-none text-blue-400 text-sm font-medium cursor-pointer transition-all duration-200 no-underline p-0 hover:text-primary-dark hover:underline">
+                ¿Olvidaste tu contraseña?
+            </button>
+        </div>
+
+        <button type="submit" class="inline-flex items-center justify-center gap-4 px-8 py-4 text-sm font-medium cursor-pointer transition-all duration-200 no-underline whitespace-nowrap rounded-md text-white bg-blue-500 hover:bg-blue-700 hover-lift">
+            <svg class="w-4 h-4 stroke-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            </svg>
+            Iniciar sesión
+        </button>
+
+    </form>
+</div>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const form = document.getElementById("loginForm") as HTMLFormElement;
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const email = formData.get("loginEmail") as string;
+        const password = formData.get("loginPassword") as string;
+
+        const { data, error } = await actions.auth.loginAction({ email })
+
+        if (error) {
+            console.error(error);
+        }
+
+        if (data) {
+            console.log(data);
+            alert("Inicion de sesión exitoso");
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 2000);
+        }
+    })
+</script>
+
+<script>
+
+    const recoveryBtn = document.getElementById("recoveryBtn");
+
+    recoveryBtn?.addEventListener("click", () => {
+        const loginDiv = document.getElementById("loginDiv");
+        const recoveryDiv = document.getElementById("recoveryDiv");
+
+        if (loginDiv && recoveryDiv) {
+            loginDiv.style.display = "none";
+            recoveryDiv.style.display = "block";
+        }
+    })
+</script>
+
+<style>
+    .hover-lift {
+        transition: all 0.5s ease-out;
+        transform: translateY(0);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-2px);
+    }
+
+    .form-input {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) 2.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        transition: all var(--transition-fast);
+        font-family: inherit;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: var(--bg-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-input:focus + .input-icon,
+    .form-input:focus ~ .input-icon {
+        color: var(--primary-color);
+    }
+
+    .form-input.error {
+        border-color: var(--error-color);
+        background-color: rgba(239, 68, 68, 0.05);
+    }
+
+    .form-input.success {
+        border-color: var(--success-color);
+        background-color: rgba(16, 185, 129, 0.05);
+    }
+
+    .form-error {
+        font-size: 0.75rem;
+        color: var(--error-color);
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        min-height: 1rem;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: all var(--transition-fast);
+    }
+
+    .form-error.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: var(--spacing-sm);
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all var(--transition-fast);
+        z-index: 2;
+    }
+
+    .password-toggle:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    .password-toggle svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+    }
+
+    .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        cursor: pointer;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        transition: color var(--transition-fast);
+    }
+
+    .checkbox-container:hover {
+        color: var(--text-primary);
+    }
+
+    .checkbox-container input[type="checkbox"] {
+        display: none;
+    }
+
+    .checkmark {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all var(--transition-fast);
+        position: relative;
+    }
+
+    .checkmark::after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: var(--primary-color);
+        border-radius: 2px;
+        opacity: 0;
+        transform: scale(0);
+        transition: all var(--transition-fast);
+    }
+
+    .checkbox-container input[type="checkbox"]:checked + .checkmark {
+        border-color: var(--primary-color);
+        background-color: var(--primary-color);
+    }
+
+    .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+        opacity: 1;
+        transform: scale(1);
+        background: white;
+    }
+
+    .checkbox-text {
+        font-weight: 500;
+    }
+</style>

@@ -1,0 +1,824 @@
+<header
+    class="fixed top-0 left-0 right-0 h-(--topbar-height) bg-(--bg-primary) backdrop-blur-md border-b border-(--border-color) flex items-center justify-between px-(--spacing-lg) z-1000 shadow-(--shadow-sm) transition-all duration-(--transition-medium)"
+>
+    <!-- Left section -->
+    <div class="flex items-center gap-(--spacing-md)">
+        <button
+            class="flex items-center justify-center w-10 h-10 border-none bg-none rounded-md cursor-pointer transition duration-(--transition-fast) text-(--text-secondary) hover:bg-(--bg-secondary) hover:text-(--text-primary)"
+            id="sidebarToggle"
+        >
+            <svg
+                class="w-5 h-5 stroke-2"
+                style="transition: transform var(--transition-medium)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                id="menu-icon"
+            >
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <div class="flex items-center gap-(--spacing-sm)">
+            <div
+                class="w-8 h-8 bg-[linear-gradient(135deg,var(--primary-color),var(--primary-dark))] rounded-md flex items-center justify-center text-white font-bold text-[1.125rem]"
+            >
+                <img
+                    src="/public/logo-solo-white.webp"
+                    class="w-5 h-5"
+                    alt="logo"
+                />
+            </div>
+            <span class="text-[1.125rem] font-semibold text-(--text-primary)">
+                System EMA
+            </span>
+        </div>
+    </div>
+
+    <!-- Right section -->
+    <div class="flex items-center gap-(--spacing-sm)">
+        <!-- Theme toggle button -->
+        <button class="theme-toggle" id="btnThemeToogle">
+            <svg
+                class="w-5 h-5 stroke-2 absolute sun-icon"
+                style="transition: all var(--transition-medium)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+            >
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg
+                class="w-5 h-5 stroke-2 absolute moon-icon"
+                style="transition: all var(--transition-medium)"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+            >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                ></path>
+            </svg>
+        </button>
+
+        <!-- Notifications -->
+        <div class="dropdown" id="notificationsDropdown">
+            <button class="dropdown-trigger">
+                <svg
+                    class="w-5 h-5 stroke-2"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                >
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                <span
+                    class="absolute -top-1 -right-1 w-[18px] h-[18px] bg-(--error-color) text-white rounded-full text-[0.75rem] font-semibold flex items-center justify-center animate-[pulse_2s_infinite]"
+                >
+                    3
+                </span>
+            </button>
+            <div class="dropdown-content w-[350px]">
+                <div class="p-(--spacing-md) border-b border-(--border-color)">
+                    <h3 class="text-[1rem] font-semibold text-(--text-primary)">
+                        Notificaciones
+                    </h3>
+                </div>
+                <div class="max-h-[300px] overflow-y-auto">
+                    <div class="notification-item unread">
+                        <span class="notification-dot"></span>
+                        <div class="notification-content">
+                            <p>Reporte generado exitosamente</p>
+                            <span class="notification-time">Hace 3 horas</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-(--spacing-md) border-t border-(--border-color)">
+                    <button
+                        class="w-full p-(--spacing-sm) border-none bg-none text-(--primary-color) text-[0.875rem] font-medium cursor-pointer rounded-md transition duration-(--transition-fast) hover:bg-[rgba(59,130,246,0.1)]"
+                    >
+                        Ver todas las notificaciones
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile -->
+        <div class="dropdown" id="userDropdown">
+            <button class="dropdown-trigger">
+                <div
+                    class="w-8 h-8 bg-(--bg-secondary) rounded-full flex items-center justify-center"
+                >
+                    <svg
+                        class="w-[18px] h-[18px]"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                    >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                        ></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <svg
+                    class="chevron-down"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                >
+                    <polyline points="6,9 12,15 18,9"></polyline>
+                </svg>
+            </button>
+            <div class="dropdown-content">
+                <div class="p-(--spacing-md) border-b border-(--border-color)">
+                    <div class="user-info">
+                        <div
+                            class="font-semibold text-(--text-primary) mb-(--spacing-xs)"
+                        >
+                            Alejandro Martinez
+                        </div>
+                        <div class="text-[0.875rem] text-(--text-secondary)">
+                            alejandro.martinez@example.com
+                        </div>
+                    </div>
+                </div>
+                <div class="py-(--spacing-sm)">
+                    <a href="#" class="dropdown-item" id="perfil-link">
+                        <svg
+                            class="w-6 h-6"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-width="2"
+                                d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                            ></path>
+                        </svg>
+                        Perfil
+                    </a>
+                    <a href="#" class="dropdown-item" id="soporte-link">
+                        <svg
+                            class="w-6 h-6"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            ></path>
+                        </svg>
+                        Soporte
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item" id="logout-link">
+                        <svg
+                            class="w-6 h-6"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M20 12H8m12 0-4 4m4-4-4-4M9 4H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h2"
+                            ></path>
+                        </svg>
+                        Cerrar sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar");
+    const mainContent = document.getElementById("main-content");
+    const menuIcon = document.getElementById("menu-icon");
+
+    sidebarToggle?.addEventListener("click", () => {
+        sidebar?.classList.toggle("collapsed");
+        mainContent?.classList.toggle("sidebar-collapsed");
+
+        const isCollapsed = sidebar?.classList.contains("collapsed");
+
+        if (menuIcon) {
+            menuIcon.style.transform = isCollapsed
+                ? "rotate(90deg)"
+                : "rotate(0deg)";
+        }
+
+        sidebarToggle.style.transform = "scale(0.9)";
+        setTimeout(() => {
+            sidebarToggle.style.transform = "scale(1)";
+        }, 150);
+    });
+</script>
+
+<script>
+    let currentTheme = "light";
+
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem("theme") || "light";
+        setTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+        setTheme(newTheme);
+    }
+
+    function setTheme(theme = "light") {
+        currentTheme = theme;
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("theme", theme);
+    }
+</script>
+
+<script>
+    // Topbar dropdown functions
+
+    const dropdowns = document.querySelectorAll(
+        ".dropdown",
+    ) as NodeListOf<HTMLElement>;
+
+    dropdowns.forEach((dropdown) => {
+        const trigger = dropdown.querySelector(".dropdown-trigger");
+        const content = dropdown.querySelector(".dropdown-content");
+
+        if (!trigger || !content) return;
+
+        // Toggle dropdown on click
+        trigger.addEventListener("click", function (e) {
+            e.stopPropagation();
+            toggleDropdown(dropdown);
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+            if (e.target instanceof Node && !dropdown.contains(e.target)) {
+                closeDropdown(dropdown);
+            }
+        });
+
+        // Handle dropdown item clicks
+        const items = dropdown.querySelectorAll(
+            ".dropdown-item",
+        ) as NodeListOf<HTMLElement>;
+        items.forEach((item) => {
+            item.addEventListener("click", function (e) {
+                e.preventDefault();
+                handleDropdownAction(item);
+                closeDropdown(dropdown);
+            });
+        });
+    });
+
+    function toggleDropdown(dropdown: HTMLElement) {
+        const isActive = dropdown.classList.contains("active");
+        const dropdowns = document.querySelectorAll(
+            ".dropdown",
+        ) as NodeListOf<HTMLElement>;
+
+        // Close all dropdowns first
+        dropdowns.forEach((d) => closeDropdown(d));
+
+        // Toggle current dropdown
+        if (!isActive) {
+            dropdown.classList.add("active");
+            animateDropdownOpen(dropdown);
+        }
+    }
+
+    function closeDropdown(dropdown: HTMLElement) {
+        dropdown.classList.remove("active");
+        animateDropdownClose(dropdown);
+    }
+
+    function animateDropdownOpen(dropdown: HTMLElement) {
+        const content = dropdown.querySelector(
+            ".dropdown-content",
+        ) as HTMLElement;
+        const items = content.querySelectorAll(
+            ".dropdown-item, .notification-item",
+        ) as NodeListOf<HTMLElement>;
+
+        // Reset and animate content
+        content.style.opacity = "0";
+        content.style.transform = "translateY(-10px) scale(0.95)";
+
+        setTimeout(() => {
+            content.style.opacity = "1";
+            content.style.transform = "translateY(0) scale(1)";
+            content.style.transition = "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+        }, 10);
+
+        // Animate items with stagger
+        items.forEach((item, index) => {
+            item.style.opacity = "0";
+            item.style.transform = "translateX(-10px)";
+
+            setTimeout(
+                () => {
+                    item.style.opacity = "1";
+                    item.style.transform = "translateX(0)";
+                    item.style.transition = "all 0.2s ease-out";
+                },
+                100 + index * 30,
+            );
+        });
+    }
+
+    function animateDropdownClose(dropdown: HTMLElement) {
+        const content = dropdown.querySelector(
+            ".dropdown-content",
+        ) as HTMLElement | null;
+        if (content) {
+            content.style.opacity = "0";
+            content.style.transform = "translateY(-10px) scale(0.95)";
+        }
+    }
+
+    function handleDropdownAction(item: HTMLElement) {
+        const action = item.textContent.trim();
+
+        // Add click animation
+        item.style.transform = "scale(0.95)";
+        setTimeout(() => {
+            item.style.transform = "scale(1)";
+        }, 100);
+    }
+</script>
+
+<style is:global>
+    .sun-icon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+
+    .moon-icon {
+        opacity: 0;
+        transform: rotate(180deg) scale(0.8);
+    }
+
+    [data-theme="dark"] .sun-icon {
+        opacity: 0;
+        transform: rotate(-180deg) scale(0.8);
+    }
+
+    [data-theme="dark"] .moon-icon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+</style>
+
+<style>
+    /* Dropdown Styles */
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-trigger {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+        border: none;
+        background: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        color: var(--text-secondary);
+    }
+
+    .dropdown-trigger:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .notification-btn {
+        position: relative;
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -2px;
+        right: -2px;
+        width: 18px;
+        height: 18px;
+        background-color: var(--error-color);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: pulse 2s infinite;
+    }
+
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background-color: var(--bg-secondary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-avatar svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .chevron-down {
+        width: 16px;
+        height: 16px;
+        transition: transform var(--transition-medium);
+    }
+
+    .dropdown.active .chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+        position: absolute;
+        top: calc(100% + var(--spacing-xs));
+        right: 0;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px) scale(0.95);
+        transition: all var(--transition-medium);
+        z-index: 1001;
+        min-width: 200px;
+    }
+
+    .dropdown.active .dropdown-content {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .dropdown-header {
+        padding: var(--spacing-md);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .dropdown-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .user-info .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .user-info .user-email {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .dropdown-items {
+        padding: var(--spacing-sm) 0;
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+        text-decoration: none;
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
+        font-size: 0.875rem;
+        transform: translateX(0);
+    }
+
+    .dropdown-item:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        transform: translateX(4px);
+    }
+
+    .dropdown-item svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background-color: var(--border-color);
+        margin: var(--spacing-sm) 0;
+    }
+</style>
+
+<style>
+    /* Notifications Dropdown */
+    .notifications-dropdown {
+        width: 350px;
+    }
+
+    .notifications-list {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md);
+        border-bottom: 1px solid var(--border-color);
+        transition: all var(--transition-fast);
+        transform: translateX(0);
+    }
+
+    .notification-item:hover {
+        background-color: var(--bg-secondary);
+        transform: translateX(4px);
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-dot {
+        width: 8px;
+        height: 8px;
+        background-color: var(--text-muted);
+        border-radius: 50%;
+        margin-top: var(--spacing-xs);
+        flex-shrink: 0;
+        transition: all var(--transition-fast);
+    }
+
+    .notification-item.unread .notification-dot {
+        background-color: var(--primary-color);
+        animation: pulse 2s infinite;
+    }
+
+    .notification-content {
+        flex: 1;
+    }
+
+    .notification-content p {
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .notification-time {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .dropdown-footer {
+        padding: var(--spacing-md);
+        border-top: 1px solid var(--border-color);
+    }
+
+    .view-all-btn {
+        width: 100%;
+        padding: var(--spacing-sm);
+        border: none;
+        background: none;
+        color: var(--primary-color);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        transition: var(--transition-fast);
+    }
+
+    .view-all-btn:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+    }
+</style>
+
+<style>
+    /* Theme Toggle */
+    .theme-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        color: var(--text-secondary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .theme-toggle:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .theme-icon {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2;
+        position: absolute;
+        transition: all var(--transition-medium);
+    }
+
+    .sun-icon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+
+    .moon-icon {
+        opacity: 0;
+        transform: rotate(180deg) scale(0.8);
+    }
+
+    [data-theme="dark"] .sun-icon {
+        opacity: 0;
+        transform: rotate(-180deg) scale(0.8);
+    }
+
+    [data-theme="dark"] .moon-icon {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+</style>
+
+<style>
+    /* Topbar */
+    .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--topbar-height);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--spacing-lg);
+        z-index: 1000;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-medium);
+    }
+
+    [data-theme="dark"] .topbar {
+        background: rgba(15, 23, 42, 0.95);
+    }
+
+    .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-md);
+    }
+
+    .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        color: var(--text-secondary);
+    }
+
+    .sidebar-toggle:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    .menu-icon {
+        width: 20px;
+        height: 20px;
+        stroke-width: 2;
+        transition: transform var(--transition-medium);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(
+            135deg,
+            var(--primary-color),
+            var(--primary-dark)
+        );
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.125rem;
+    }
+
+    .logo-text {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .topbar-center {
+        flex: 1;
+        max-width: 500px;
+        margin: 0 var(--spacing-xl);
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+        transition: transform var(--transition-fast);
+    }
+
+    .search-container.focused {
+        transform: scale(1.02);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: var(--spacing-sm);
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: var(--text-muted);
+        stroke-width: 2;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) 2.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        transition: var(--transition-fast);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: var(--bg-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+</style>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1080"
+   height="1080"
+   viewBox="0 0 1080 1080"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.1-rc (06eac75fbf, 2025-03-29)"
+   sodipodi:docname="logo-solo-white.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showguides="true"
+     inkscape:zoom="0.52222222"
+     inkscape:cx="540"
+     inkscape:cy="538.08511"
+     inkscape:window-width="1600"
+     inkscape:window-height="772"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="549.57447,756.38298"
+       orientation="1,0"
+       id="guide1"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="-310.21277,555.31915"
+       orientation="0,-1"
+       id="guide2"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(2.1998788,-11.099968)"
+     style="fill:#ffffff">
+    <rect
+       x="186.44882"
+       y="171.12967"
+       width="727.27264"
+       height="727.27258"
+       fill="none"
+       stroke="#ff3e3e"
+       stroke-width="72.7274"
+       id="rect1"
+       style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+    <line
+       x1="186.44882"
+       y1="898.40131"
+       x2="913.72144"
+       y2="171.12967"
+       stroke="#ff3e3e"
+       stroke-width="72.7274"
+       id="line1"
+       style="fill:none;stroke:#ffffff;stroke-opacity:1" />
+  </g>
+</svg>

@@ -1,0 +1,154 @@
+---
+import TopHeader from "../components/utils/TopHeader.astro";
+import StatsCard from "../components/utils/StatsCard.astro";
+import ProductCard from "../components/utils/ProductCard.astro";
+import ModalLayout from "../components/utils/ModalLayout.astro";
+---
+
+<main class="main-content" id="main-content">
+    <div class="max-w-[1400px] mx-auto">
+        <TopHeader
+            title="Gestión de Inventario"
+            subtitle="Administra tus productos y categorías"
+            section="Inventario"
+        />
+        <div
+            class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-(--spacing-lg) mb-(--spacing-xl)"
+        >
+            <StatsCard
+                title="Total de Productos"
+                value="0"
+                icon="box"
+                color="green"
+            />
+            <StatsCard
+                title="Categorias"
+                value="0"
+                icon="ballot"
+                color="blue"
+            />
+            <StatsCard
+                title="Stock Bajo"
+                value="0"
+                icon="down"
+                color="orange"
+            />
+            <StatsCard
+                title="Stock Agotado"
+                value="0"
+                icon="stock"
+                color="red"
+            />
+        </div>
+        <div
+            class="bg-(--bg-primary) border border-(--border-color) rounded-xl p-(--spacing-md) mb-(--spacing-xl) shadow-(--shadow-sm)"
+        >
+            <div
+                class="grid grid-cols-[2fr_1fr_1fr_1fr_auto] items-end gap-(--spacing-md)"
+            >
+                <div class="relative">
+                    <div class="relative w-full">
+                        <svg
+                            class="absolute left-(--spacing-sm) top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-(--text-muted) stroke-2"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+
+                        <!-- input -->
+                        <input
+                            type="text"
+                            class="w-full py-(--spacing-sm) pr-(--spacing-sm) pl-10 border border-(--border-color) rounded-md bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition duration-(--transition-fast) focus:outline-none focus:border-(--primary-color) focus:bg-(--bg-primary) focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                            placeholder="Buscar..."
+                        />
+                    </div>
+                </div>
+                <div class="flex flex-col gap-(--spacing-xs)">
+                    <label
+                        class="text-[0.875rem] font-medium text-(--text-secondary)"
+                    >
+                        Categoría
+                    </label>
+                    <select
+                        class="p-(--spacing-sm) border border-(--border-color) rounded-md bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition duration-(--transition-fast) focus:outline-none focus:border-(--primary-color) focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                    >
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-(--spacing-xs)">
+                    <label
+                        class="text-[0.875rem] font-medium text-(--text-secondary)"
+                    >
+                        Estado
+                    </label>
+                    <select
+                        class="p-(--spacing-sm) border border-(--border-color) rounded-md bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition duration-(--transition-fast) focus:outline-none focus:border-(--primary-color) focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Bajo Stock">Bajo Stock</option>
+                        <option value="Sin Stock">Sin Stock</option>
+                    </select>
+                </div>
+                <button
+                    class="p-(--spacing-sm) px-(--spacing-md) bg-(--bg-secondary) border border-(--border-color) rounded-md text-(--text-secondary) text-[0.875rem] cursor-pointer transition duration-(--transition-fast) h-fit hover:bg-(--bg-tertiary) hover:text-(--text-primary)"
+                >
+                    Limpiar filtros
+                </button>
+            </div>
+        </div>
+        <div
+            class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"
+        >
+            <ProductCard />
+        </div>
+        <ModalLayout
+            title="Agregar Producto"
+            modalId="productModal"
+            form="productForm"
+            type="large"
+        />
+        <ModalLayout
+            title="Agregar Categoria"
+            modalId="categoryModal"
+            form="categoryForm"
+            type="small"
+        />
+    </div>
+</main>
+
+<style>
+    body {
+        font-family:
+            "Inter",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Oxygen,
+            Ubuntu,
+            Cantarell,
+            sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+        overflow-x: hidden;
+        transition:
+            background-color var(--transition-medium),
+            color var(--transition-medium);
+    }
+    .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: var(--spacing-xl);
+        transition: all var(--transition-medium);
+        min-height: calc(100vh - var(--topbar-height));
+    }
+
+    .main-content.sidebar-collapsed {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+</style>
