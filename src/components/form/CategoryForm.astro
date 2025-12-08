@@ -13,15 +13,43 @@
 </div>
 
 <script>
+    document
+        .getElementById("addNewCategoryBtn")
+        ?.addEventListener("click", () => {
+            document
+                .getElementById("subCategoryModal")
+                ?.classList.add("active");
+        });
+</script>
+
+<script>
     import { actions } from "astro:actions";
 
-    const { data: categoriesData } = await actions.inventario.getCategories();
+    let categoryList = [];
 
-    const categoriesList = categoriesData?.data || [];
+    declare global {
+        interface Window {
+            updateCategoriesList: () => Promise<void>;
+            categoryList: any[];
+        }
+    }
 
-    console.log(categoriesList);
+    async function fetchRenderCategories() {
+        const { data: categoriesData } =
+            await actions.inventario.getCategories();
 
-    renderCategories(categoriesList);
+        categoryList = categoriesData?.data || [];
+
+        console.log(categoryList);
+
+        renderCategories(categoryList);
+
+        window.categoryList = categoryList;
+    }
+
+    fetchRenderCategories();
+
+    window.updateCategoriesList = fetchRenderCategories;
 
     interface Categories {
         name: string;
@@ -81,10 +109,8 @@
             })
             .join("");
     }
-</script>
-<script>
+
     const grid = document.getElementById("categoriesList");
-    import { actions } from "astro:actions";
 
     grid?.addEventListener("click", (e) => {
         const target = e.target as HTMLElement;
@@ -93,34 +119,48 @@
         if (editBtn) {
             const id = editBtn.dataset.id;
             console.log(id);
+
+            document
+                .getElementById("subCategoryModal")
+                ?.classList.add("active");
+
+            const categoryNameInput = document.getElementById(
+                "categoryName",
+            ) as HTMLInputElement | null;
+            const categoryIdInput = document.getElementById(
+                "categoryId",
+            ) as HTMLInputElement | null;
+            if (categoryNameInput && categoryIdInput) {
+                const category = window.categoryList.find(
+                    (category) => category.idcategoria === Number(id),
+                );
+                categoryNameInput.value = category?.name || "";
+                categoryIdInput.value = category?.idcategoria || "";
+            }
         }
     });
 
-    grid?.addEventListener("click", (e) => {
+    grid?.addEventListener("click", async (e) => {
         const target = e.target as HTMLElement;
         const deleteBtn = target.closest(".category-delete-btn") as HTMLElement;
 
         if (deleteBtn) {
             const id = deleteBtn.dataset.id;
             console.log(id);
+
+            const { data, error } = await actions.inventario.deleteCategory({
+                categoryId: Number(id),
+            });
+
+            if (error) {
+                console.error("Error al eliminar la categoría:", error);
+                return;
+            }
+
+            console.log("Categoría eliminada exitosamente:", data);
+
+            window.updateCategoriesList();
         }
-    });
-
-    const addNewCategoryBtn = document.getElementById("addNewCategoryBtn");
-    addNewCategoryBtn?.addEventListener("click", async () => {
-        const categoryName = document.getElementById(
-            "newCategoryName",
-        ) as HTMLInputElement;
-        const name = categoryName.value;
-
-        const { data, error } = await actions.inventario.addCategory({ name });
-
-        if (error) {
-            console.error("Error al agregar la categoría:", error);
-            return;
-        }
-
-        console.log("Categoría agregada exitosamente:", data);
     });
 </script>
 

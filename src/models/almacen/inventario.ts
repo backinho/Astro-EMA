@@ -38,3 +38,31 @@ export async function addCategory(name: string) {
 
     return { data: data, error: null };
 }
+
+export async function editCategory(name: string, categoryId: number) {
+    const { data, error } = await supabase
+        .from('categoria')
+        .update({ name: name })
+        .eq('idcategoria', categoryId);
+
+    if (error) {
+        console.error('Error al editar la categoría:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}
+
+export async function deleteCategory(categoryId: number) {
+    const { data, error } = await supabase
+        .from('categoria')
+        .delete()
+        .eq('idcategoria', categoryId);
+
+    if (error) {
+        console.error('Error al eliminar la categoría:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}

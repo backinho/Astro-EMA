@@ -3,6 +3,7 @@ import TopHeader from "../components/utils/TopHeader.astro";
 import StatsCard from "../components/utils/StatsCard.astro";
 import ProductCard from "../components/utils/ProductCard.astro";
 import ModalLayout from "../components/utils/ModalLayout.astro";
+import SubModalLayout from "../components/utils/SubModalLayout.astro";
 ---
 
 <main class="main-content" id="main-content">
@@ -115,6 +116,12 @@ import ModalLayout from "../components/utils/ModalLayout.astro";
             title="Agregar Categoria"
             modalId="categoryModal"
             form="categoryForm"
+            type="small"
+        />
+        <SubModalLayout
+            title="Agregar Categoria"
+            modalId="subCategoryModal"
+            form="subCategoryForm"
             type="small"
         />
     </div>
