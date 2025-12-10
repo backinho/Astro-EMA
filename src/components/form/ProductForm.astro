@@ -148,6 +148,8 @@
 </form>
 
 <script>
+    let productFiles = [] as File[];
+
     const imageInput = document.getElementById(
         "productImage",
     ) as HTMLInputElement;
@@ -164,47 +166,58 @@
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
 
-                // Asegurarse de que el archivo sea una imagen
                 if (file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-
-                    // Definir qué hacer una vez que el archivo se haya leído
-                    reader.onload = (e) => {
-                        // Crear un contenedor para la imagen (opcional, para el estilo)
-                        const imageWrapper = document.createElement("div");
-                        const removeButton = document.createElement("button");
-                        removeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-3 h-3 stroke-[2]">
-                                                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                    </svg>`;
-                        removeButton.className =
-                            "absolute top-(--spacing-xs) right-(--spacing-xs) w-6 h-6 flex items-center justify-center bg-[rgba(239,68,68,0.9)] text-white rounded-full cursor-pointer transition-all duration---transition-fast) hover:bg-(--error-color) hover:scale-110";
-                        removeButton.addEventListener("click", () => {
-                            imageWrapper.remove();
-                        });
-                        imageWrapper.className =
-                            "relative aspect-square rounded-lg overflow-hidden border border-(--border-color)"; // Clase para estilo
-
-                        // Crear el elemento de la imagen
-                        const img = document.createElement(
-                            "img",
-                        ) as HTMLImageElement;
-                        img.src = e.target?.result as string; // Establecer la URL de datos como la fuente
-                        img.alt = file.name;
-                        img.className = "w-full h-full object-cover"; // Clase para estilo
-
-                        // Añadir la imagen al contenedor
-                        imageWrapper.appendChild(img);
-                        imageWrapper.appendChild(removeButton);
-
-                        // Añadir el contenedor al área de previsualización
-                        previewContainer.appendChild(imageWrapper);
-                    };
-
-                    // Leer el archivo como una URL de datos (Data URL)
-                    reader.readAsDataURL(file);
+                    productFiles.push(file);
                 }
+
+                renderProductImages();
+
+                imageInput.value = "";
             }
         }
     });
+
+    function renderProductImages() {
+        previewContainer.innerHTML = "";
+
+        productFiles.forEach((file, index) => {
+            const reader = new FileReader();
+
+            // Definir qué hacer una vez que el archivo se haya leído
+            reader.onload = (e) => {
+                // Crear un contenedor para la imagen (opcional, para el estilo)
+                const imageWrapper = document.createElement("div");
+                const removeButton = document.createElement("button");
+                removeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-3 h-3 stroke-[2]">
+                                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                    </svg>`;
+                removeButton.className =
+                    "absolute top-(--spacing-xs) right-(--spacing-xs) w-6 h-6 flex items-center justify-center bg-[rgba(239,68,68,0.9)] text-white rounded-full cursor-pointer transition-all duration---transition-fast) hover:bg-(--error-color) hover:scale-110";
+                removeButton.addEventListener("click", () => {
+                    imageWrapper.remove();
+                    productFiles.splice(index, 1);
+                    renderProductImages();
+                });
+                imageWrapper.className =
+                    "relative aspect-square rounded-lg overflow-hidden border border-(--border-color)"; // Clase para estilo
+
+                // Crear el elemento de la imagen
+                const img = document.createElement("img") as HTMLImageElement;
+                img.src = e.target?.result as string; // Establecer la URL de datos como la fuente
+                img.alt = file.name;
+                img.className = "w-full h-full object-cover"; // Clase para estilo
+
+                // Añadir la imagen al contenedor
+                imageWrapper.appendChild(img);
+                imageWrapper.appendChild(removeButton);
+
+                // Añadir el contenedor al área de previsualización
+                previewContainer.appendChild(imageWrapper);
+            };
+
+            // Leer el archivo como una URL de datos (Data URL)
+            reader.readAsDataURL(file);
+        });
+    }
 </script>
