@@ -1,21 +1,24 @@
 ---
 import ProductForm from "../form/ProductForm.astro";
 import CategoryForm from "../form/CategoryForm.astro";
+import ProductDetails from "../form/ProductDetails.astro";
 
 interface Props {
     title: string;
     modalId: string;
     form: string;
     type: string;
+    buttons: string;
 }
 
-const { title, modalId, form, type } = Astro.props as Props;
+const { title, modalId, form, type, buttons } = Astro.props as Props;
 
 const modalType = type === "large" ? "modal modal-large" : "modal";
 
 const formSection: Record<string, any> = {
     productForm: ProductForm,
     categoryForm: CategoryForm,
+    productDetailsForm: ProductDetails,
 };
 
 const FormSection = formSection[form];
@@ -37,11 +40,11 @@ const FormSection = formSection[form];
     </div>
 </div>
 
-<script define:vars={{ modalId, type, form }}>
+<script define:vars={{ modalId, type, form, buttons }}>
     const modalFooter = document.getElementById(`modalFooter-${modalId}`);
 
     console.log(type);
-    if (type === "large") {
+    if (buttons === "double") {
         modalFooter.innerHTML = `
             <button
                 type="button"
@@ -53,7 +56,7 @@ const FormSection = formSection[form];
                 class="btn btn-primary"
                 id="saveModalBtn-${modalId}">Guardar</button>
         `;
-    } else if (type === "small") {
+    } else if (buttons === "single") {
         modalFooter.innerHTML = `
             <button
                 type="button"

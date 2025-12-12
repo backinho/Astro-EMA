@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Topbar from "../components/Topbar.astro";
+import EntradaLayout from "../sections/EntradaLayout.astro";
+---
+
+<Layout>
+    <Topbar />
+    <div class="flex pt-(--topbar-height) min-h-screen">
+        <Sidebar />
+        <EntradaLayout />
+    </div>
+</Layout>

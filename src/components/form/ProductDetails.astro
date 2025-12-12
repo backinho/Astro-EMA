@@ -1,0 +1,217 @@
+<div id="productDetails"></div>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const inventario = await actions.inventario.getInventario();
+
+    const allProducts = inventario.data?.data || [];
+
+    const productDetailsContainer = document.getElementById(
+        "productDetails",
+    ) as HTMLDivElement;
+
+    function loadProductDetails(productId: number) {
+        const productoEncontrado = allProducts.find(producto => producto.idarticulo === productId);
+        
+        if (productoEncontrado) {
+            renderProductDetails(productoEncontrado);
+        } else {
+            productDetailsContainer.innerHTML = `<p>Producto no encontrado.</p>`;
+        }
+    }
+
+    document.addEventListener('productDetailRequested', (event) => {
+        // Asegurarse de que el evento es de tipo CustomEvent y tiene el detail esperado
+        if (event instanceof CustomEvent && event.detail.productId) {
+            const productId = event.detail.productId;
+            loadProductDetails(productId);
+        }
+    });
+
+    interface Categoria {
+        name: string;
+        idcategoria: string | number;
+    }
+
+    interface ArticuloCategoria {
+        categoria: Categoria;
+    }
+
+    interface ArticuloImagen {
+        image: string;
+        order: number;
+    }
+
+    interface Product {
+        idarticulo: number;
+        name: string;
+        code: string;
+        description: string | null;
+        price: number | string | null;
+        stock: number | null;
+        articulo_imagen: ArticuloImagen[];
+        articulo_categoria: ArticuloCategoria[];
+    }
+
+    function getStatusFromStock(stock: number | null) {
+        if (stock === 0) return 'Sin Stock';
+        if (stock || 0 <= 5) return 'Bajo Stock';
+        return 'Activo';
+    }
+
+    function renderProductDetails(producto: Product){
+        const nombreCategoria = producto.articulo_categoria && producto.articulo_categoria.length > 0
+            ? producto.articulo_categoria[0].categoria.name
+            : 'Sin categoría';
+
+        productDetailsContainer.innerHTML = `
+            <div class="product-detail-layout">
+                <div class="product-detail-images">
+                    <div class="main-image">
+                        <img id="mainProductImage" src="${producto.articulo_imagen && producto.articulo_imagen[0] ? producto.articulo_imagen[0].image : 'https://via.placeholder.com/500'}" 
+                             alt="${producto.name}">
+                    </div>
+                    ${producto.articulo_imagen && producto.articulo_imagen.length > 1 ? `
+                        <div class="image-thumbnails">
+                            ${producto.articulo_imagen.map((img, index) => `
+                                <img src="${img.image}" alt="Imagen ${index + 1}" 
+                                     class="thumbnail ${index === 0 ? 'active' : ''}"
+                                     onclick="changeMainImage('${img.image}', this)">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="product-detail-info">
+                    <h3>${producto.name}</h3>
+                    <p class="detail-code"><strong>Código:</strong> ${producto.code}</p>
+                    <p class="detail-category"><strong>Categoría:</strong> ${nombreCategoria}</p>
+                    <p class="detail-price"><strong>Precio:</strong> $${parseFloat(String(producto.price ?? 0.0)).toFixed(2)}</p>
+                    <p class="detail-stock"><strong>Stock:</strong> 
+                        <span class="${(producto.stock ?? 0) <= 5 ? 'low-stock' : ''}">${producto.stock ?? 0}</span>
+                    </p>
+                    <p class="detail-status"><strong>Estado:</strong> 
+                        <span class="status-badge status-${getStatusFromStock(producto.stock).toLowerCase().replace(' ', '-')}">
+                            ${getStatusFromStock(producto.stock)}
+                        </span>
+                    </p>
+                    ${producto.description ? `
+                        <div class="detail-description">
+                            <strong>Descripción:</strong>
+                            <p>${producto.description}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `
+    }
+
+    function changeMainImage(src: string, thumbnail: HTMLElement) {
+        const mainImage = document.getElementById('mainProductImage') as HTMLImageElement | null;
+        if (mainImage) {
+            mainImage.src = src;
+        }
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        thumbnail.classList.add('active');
+    }
+
+    declare global {
+        interface Window {
+            changeMainImage?: (src: string, thumbnail: HTMLElement) => void;
+        }
+    }
+
+    window.changeMainImage = changeMainImage;
+</script>
+
+<style is:global>
+    .product-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing-2xl);
+    }
+
+    .product-detail-images {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .main-image {
+        aspect-ratio: 1;
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-thumbnails {
+        display: flex;
+        gap: var(--spacing-sm);
+        overflow-x: auto;
+    }
+
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-color);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .thumbnail.active {
+        border-color: var(--primary-color);
+    }
+
+    .thumbnail:hover {
+        border-color: var(--primary-light);
+        transform: scale(1.05);
+    }
+
+    .product-detail-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .product-detail-info h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-md);
+    }
+
+    .detail-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .detail-description {
+        margin-top: var(--spacing-lg);
+    }
+
+    .detail-description p {
+        margin-top: var(--spacing-sm);
+        line-height: 1.6;
+        color: var(--text-secondary);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        border-radius: var(--radius-md);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+</style>

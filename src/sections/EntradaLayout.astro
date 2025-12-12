@@ -1,0 +1,69 @@
+---
+import TopHeader from "../components/utils/TopHeader.astro";
+import StatsCard from "../components/utils/StatsCard.astro";
+---
+
+<main class="main-content" id="main-content">
+    <div class="max-w-[1400px] mx-auto">
+        <TopHeader
+            title="Gestión de Entradas"
+            subtitle="Administra las entradas de productos al inventario"
+            section="Entradas"
+        />
+        <div
+            class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-(--spacing-lg) mb-(--spacing-xl)"
+        >
+            <StatsCard
+                title="Total de Productos"
+                value="0"
+                icon="box"
+                color="green"
+            />
+            <StatsCard
+                title="Categorias"
+                value="0"
+                icon="ballot"
+                color="blue"
+            />
+            <StatsCard
+                title="Stock Bajo"
+                value="0"
+                icon="down"
+                color="orange"
+            />
+        </div>
+    </div>
+</main>
+
+<style>
+    body {
+        font-family:
+            "Inter",
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Oxygen,
+            Ubuntu,
+            Cantarell,
+            sans-serif;
+        line-height: 1.6;
+        color: var(--text-primary);
+        background-color: var(--bg-secondary);
+        overflow-x: hidden;
+        transition:
+            background-color var(--transition-medium),
+            color var(--transition-medium);
+    }
+    .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        padding: var(--spacing-xl);
+        transition: all var(--transition-medium);
+        min-height: calc(100vh - var(--topbar-height));
+    }
+
+    .main-content.sidebar-collapsed {
+        margin-left: var(--sidebar-collapsed-width);
+    }
+</style>
