@@ -1,6 +1,9 @@
 ---
 import TopHeader from "../components/utils/TopHeader.astro";
 import StatsCard from "../components/utils/StatsCard.astro";
+import EntryCard from "../components/utils/EntryCard.astro";
+import ModalLayout from "../components/utils/ModalLayout.astro";
+import SubModalLayout from "../components/utils/SubModalLayout.astro";
 ---
 
 <main class="main-content" id="main-content">
@@ -14,23 +17,68 @@ import StatsCard from "../components/utils/StatsCard.astro";
             class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-(--spacing-lg) mb-(--spacing-xl)"
         >
             <StatsCard
-                title="Total de Productos"
+                title="Total en Entradas"
                 value="0"
-                icon="box"
+                icon="dollar"
                 color="green"
             />
+            <StatsCard title="Entradas" value="0" icon="inboxIn" color="blue" />
             <StatsCard
-                title="Categorias"
+                title="Proveedores"
                 value="0"
-                icon="ballot"
-                color="blue"
-            />
-            <StatsCard
-                title="Stock Bajo"
-                value="0"
-                icon="down"
+                icon="userTie"
                 color="orange"
             />
+        </div>
+        <div
+            class="bg-(--bg-primary) border border-(--border-color) rounded-xl p-(--spacing-md) mb-(--spacing-xl) shadow-(--shadow-sm)"
+        >
+            <div
+                class="grid grid-cols-[2fr_1fr_1fr_auto] items-end gap-(--spacing-md)"
+            >
+                <div class="relative">
+                    <div class="relative w-full">
+                        <svg
+                            class="absolute left-(--spacing-sm) top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-(--text-muted) stroke-2"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                        >
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+
+                        <!-- input -->
+                        <input
+                            type="text"
+                            id="filterSearch"
+                            class="w-full py-(--spacing-sm) pr-(--spacing-sm) pl-10 border border-(--border-color) rounded-md bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition duration-(--transition-fast) focus:outline-none focus:border-(--primary-color) focus:bg-(--bg-primary) focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                            placeholder="Buscar..."
+                        />
+                    </div>
+                </div>
+                <div class="flex flex-col gap-(--spacing-xs)">
+                    <label
+                        class="text-[0.875rem] font-medium text-(--text-secondary)"
+                    >
+                        Proveedor
+                    </label>
+                    <select
+                        class="p-(--spacing-sm) border border-(--border-color) rounded-md bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition duration-(--transition-fast) focus:outline-none focus:border-(--primary-color) focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)]"
+                        id="filterProveedor"
+                    >
+                        <option value="">Todos los proveedores</option>
+                    </select>
+                </div>
+                <button
+                    class="p-(--spacing-sm) px-(--spacing-md) bg-(--bg-secondary) border border-(--border-color) rounded-md text-(--text-secondary) text-[0.875rem] cursor-pointer transition duration-(--transition-fast) h-fit hover:bg-(--bg-tertiary) hover:text-(--text-primary)"
+                >
+                    Limpiar filtros
+                </button>
+            </div>
+        </div>
+        <div>
+            <EntryCard />
         </div>
     </div>
 </main>

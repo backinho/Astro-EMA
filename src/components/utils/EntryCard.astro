@@ -1,0 +1,31 @@
+<div
+    id="entry-grid"
+    class="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"
+>
+    <h1>TODOOOO MAI BRODEERR</h1>
+</div>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const entries = await actions.entrada.getEntries();
+
+    const entry = entries.data?.data || [];
+
+    console.log("Entries obtenidos:", entry);
+
+    //renderEntries(entry || []);
+
+    interface Entry {
+        identrada: number;
+        fecha: string;
+        articulo_entrada: ArticuloEntrada[];
+    }
+
+    interface ArticuloEntrada {
+        idarticulo_entrada: number;
+        idarticulo: number;
+        cantidad: number;
+        precio: number;
+    }
+</script>

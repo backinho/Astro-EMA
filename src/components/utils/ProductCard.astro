@@ -1,8 +1,11 @@
-<div id="product-grid" class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"></div>
+<div
+    id="product-grid"
+    class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"
+>
+</div>
 
 <script>
     import { actions } from "astro:actions";
-import { boolean } from "astro:schema";
 
     const inventario = await actions.inventario.getInventario();
 
@@ -132,9 +135,15 @@ import { boolean } from "astro:schema";
     }
 
     function filterProducts() {
-        const searchInput = document.getElementById("filterSearch") as HTMLInputElement;
-        const categorySelect = document.getElementById("filterCategory") as HTMLSelectElement;
-        const statusSelect = document.getElementById("filterStatus") as HTMLSelectElement;
+        const searchInput = document.getElementById(
+            "filterSearch",
+        ) as HTMLInputElement;
+        const categorySelect = document.getElementById(
+            "filterCategory",
+        ) as HTMLSelectElement;
+        const statusSelect = document.getElementById(
+            "filterStatus",
+        ) as HTMLSelectElement;
 
         const searchTerm = searchInput?.value.toLowerCase().trim() || "";
         const selectedCategory = categorySelect?.value || "";
@@ -147,16 +156,22 @@ import { boolean } from "astro:schema";
                 product.code.toLowerCase().includes(searchTerm);
 
             // Filtro de Categoría
-            const productCategory = product.articulo_categoria[0]?.categoria?.name || "";
+            const productCategory =
+                product.articulo_categoria[0]?.categoria?.name || "";
             const matchesCategory =
                 !selectedCategory ||
                 (product.articulo_categoria.length > 0 &&
-                // Compara con el idcategoria que es el 'value' del select en InventarioLayout
-                product.articulo_categoria.some((ac: ArticuloCategoria) => ac.categoria.idcategoria.toString() === selectedCategory));
+                    // Compara con el idcategoria que es el 'value' del select en InventarioLayout
+                    product.articulo_categoria.some(
+                        (ac: ArticuloCategoria) =>
+                            ac.categoria.idcategoria.toString() ===
+                            selectedCategory,
+                    ));
 
             // Filtro de Estado
             const productStatus = getStatusFromStock(product.stock ?? 0);
-            const matchesStatus = !selectedStatus || productStatus === selectedStatus;
+            const matchesStatus =
+                !selectedStatus || productStatus === selectedStatus;
 
             return matchesSearch && matchesCategory && matchesStatus;
         });
@@ -168,7 +183,7 @@ import { boolean } from "astro:schema";
         document.querySelectorAll(".product-view-btn").forEach((button) => {
             button.addEventListener("click", () => {
                 const productId = parseInt(
-                    button.getAttribute("data-id") || "0"
+                    button.getAttribute("data-id") || "0",
                 );
                 viewProductDetails(productId);
             });
@@ -177,7 +192,7 @@ import { boolean } from "astro:schema";
         document.querySelectorAll(".product-edit-btn").forEach((button) => {
             button.addEventListener("click", () => {
                 const productId = parseInt(
-                    button.getAttribute("data-id") || "0"
+                    button.getAttribute("data-id") || "0",
                 );
                 editProduct(productId);
             });
@@ -186,10 +201,12 @@ import { boolean } from "astro:schema";
         document.querySelectorAll(".product-delete-btn").forEach((button) => {
             button.addEventListener("click", async () => {
                 const productId = parseInt(
-                    button.getAttribute("data-id") || "0"
+                    button.getAttribute("data-id") || "0",
                 );
-                
-                const confirmDelete = confirm("¿Estás seguro de que deseas eliminar este producto?");
+
+                const confirmDelete = confirm(
+                    "¿Estás seguro de que deseas eliminar este producto?",
+                );
                 if (!confirmDelete) return;
 
                 const { data, error } = await actions.inventario.deleteProduct({
@@ -205,15 +222,15 @@ import { boolean } from "astro:schema";
 
                 filterProducts();
             });
-        })
+        });
     }
 
     function viewProductDetails(productId: number) {
         console.log("Ver detalles del producto ID:", productId);
         const modal = document.getElementById("productDetailsModal");
         if (modal) {
-            const detailEvent = new CustomEvent('productDetailRequested', {
-                detail: { productId: productId }
+            const detailEvent = new CustomEvent("productDetailRequested", {
+                detail: { productId: productId },
             });
             document.dispatchEvent(detailEvent);
             modal.classList.add("active");
@@ -225,20 +242,40 @@ import { boolean } from "astro:schema";
         const modal = document.getElementById("productModal");
         if (modal) {
             modal.classList.add("active");
-            const productEdit = products.find(p => p.idarticulo === productId);
+            const productEdit = products.find(
+                (p) => p.idarticulo === productId,
+            );
 
             if (productEdit) {
-                const editEvent = new CustomEvent('productEditRequested', {
-                    detail: { product: productEdit }
+                const editEvent = new CustomEvent("productEditRequested", {
+                    detail: { product: productEdit },
                 });
                 document.dispatchEvent(editEvent);
-                
-                (document.getElementById("productId") as HTMLInputElement).value = productEdit.idarticulo.toString();
-                (document.getElementById("productName") as HTMLInputElement).value = productEdit.name;
-                (document.getElementById("productCode") as HTMLInputElement).value = productEdit.code;
-                (document.getElementById("productCategory") as HTMLSelectElement).value = productEdit.articulo_categoria[0]?.categoria.idcategoria.toString() || "";
-                (document.getElementById("productState") as HTMLSelectElement).value = productEdit.status ? "1" : "0";
-                (document.getElementById("productDescription") as HTMLTextAreaElement).value = productEdit.description || "";
+
+                (
+                    document.getElementById("productId") as HTMLInputElement
+                ).value = productEdit.idarticulo.toString();
+                (
+                    document.getElementById("productName") as HTMLInputElement
+                ).value = productEdit.name;
+                (
+                    document.getElementById("productCode") as HTMLInputElement
+                ).value = productEdit.code;
+                (
+                    document.getElementById(
+                        "productCategory",
+                    ) as HTMLSelectElement
+                ).value =
+                    productEdit.articulo_categoria[0]?.categoria.idcategoria.toString() ||
+                    "";
+                (
+                    document.getElementById("productState") as HTMLSelectElement
+                ).value = productEdit.status ? "1" : "0";
+                (
+                    document.getElementById(
+                        "productDescription",
+                    ) as HTMLTextAreaElement
+                ).value = productEdit.description || "";
             }
         }
     }
@@ -256,7 +293,9 @@ import { boolean } from "astro:schema";
         const searchInput = document.getElementById("filterSearch");
         const categorySelect = document.getElementById("filterCategory");
         const statusSelect = document.getElementById("filterStatus");
-        const clearButton = document.querySelector("button.p-\\(--spacing-sm\\).px-\\(--spacing-md\\)");
+        const clearButton = document.querySelector(
+            "button.p-\\(--spacing-sm\\).px-\\(--spacing-md\\)",
+        );
 
         if (searchInput) {
             searchInput.addEventListener("input", () => {
@@ -335,7 +374,7 @@ import { boolean } from "astro:schema";
     }
 
     .no-products {
-        grid-column: 1 / -1; 
+        grid-column: 1 / -1;
         display: flex;
         flex-direction: column;
         align-items: center;

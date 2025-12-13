@@ -4,9 +4,11 @@ import { z } from 'astro:schema';
 import { auth } from './Auth';
 import { inventario } from './almacen/Inventario';
 import { imageKitServer } from './ImageKit';
+import { entrada } from './almacen/Entrada';
 
 export const server = {
     auth,
     inventario,
-    imageKitServer
+    imageKitServer,
+    entrada
 }
