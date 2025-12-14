@@ -1,0 +1,38 @@
+<div class="flex gap-(--spacing-md)">
+    <button class="btn btn-secondary" id="proveedorModalBtn">
+        <svg
+            class="btn-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+        >
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <path d="M20 8v6M23 11h-6"></path>
+        </svg>
+        Proveedores
+    </button>
+    <button class="btn btn-primary" id="entryModalBtn">
+        <svg
+            class="btn-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+        >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Agregar Entrada
+    </button>
+</div>
+
+<script>
+    document
+        .getElementById("proveedorModalBtn")
+        ?.addEventListener("click", () => {
+            document.getElementById("proveedorModal")?.classList.add("active");
+        });
+    document.getElementById("entryModalBtn")?.addEventListener("click", () => {
+        document.getElementById("entryModal")?.classList.add("active");
+    });
+</script>

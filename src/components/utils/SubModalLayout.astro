@@ -1,5 +1,6 @@
 ---
 import SubCategoryForm from "../form/SubCategoryForm.astro";
+import SubProveedorForm from "../form/SubProveedorForm.astro";
 
 interface Props {
     title: string;
@@ -14,6 +15,7 @@ const modalType = type === "large" ? "modal modal-large" : "modal";
 
 const formSection: Record<string, any> = {
     subCategoryForm: SubCategoryForm,
+    subProveedorForm: SubProveedorForm,
 };
 
 const FormSection = formSection[form];

@@ -1,5 +1,6 @@
 ---
 import InventarioButtons from "../buttons/InventarioButtons.astro";
+import EntradaButtons from "../buttons/EntradaButtons.astro";
 
 interface Props {
     title: string;
@@ -11,6 +12,7 @@ const { title, subtitle, section } = Astro.props as Props;
 
 const buttons: Record<string, any> = {
     Inventario: InventarioButtons,
+    Entrada: EntradaButtons,
 };
 
 const CurrentButton = buttons[section];

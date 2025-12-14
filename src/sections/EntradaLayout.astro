@@ -11,7 +11,7 @@ import SubModalLayout from "../components/utils/SubModalLayout.astro";
         <TopHeader
             title="Gestión de Entradas"
             subtitle="Administra las entradas de productos al inventario"
-            section="Entradas"
+            section="Entrada"
         />
         <div
             class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-(--spacing-lg) mb-(--spacing-xl)"
@@ -80,6 +80,26 @@ import SubModalLayout from "../components/utils/SubModalLayout.astro";
         <div>
             <EntryCard />
         </div>
+        <ModalLayout
+            title="Gestionar Proveedores"
+            modalId="proveedorModal"
+            form="proveedorForm"
+            type="large"
+            buttons="single"
+        />
+        <ModalLayout
+            title="Agregar Entrada"
+            modalId="entryModal"
+            form="entryForm"
+            type="large"
+            buttons="double"
+        />
+        <SubModalLayout
+            title="Agregar Proveedor"
+            modalId="subProveedorModal"
+            form="subProveedorForm"
+            type="small"
+        />
     </div>
 </main>
 

@@ -1,0 +1,249 @@
+<form id="subProveedorForm" class="form-class">
+    <div
+        class="bg-(--bg-secondary) p-(--spacing-lg) rounded-lg border border-(--border-color)"
+    >
+        <h3
+            class="text-lg font-semibold text-(--text-primary) mb-(--spacing-md) pb-(--spacing-sm) border-b border-(--border-color)"
+        >
+            Información del proveedor
+        </h3>
+        <div class="grid gap-(--spacing-lg)">
+            <input type="hidden" id="proveedorId" name="proveedorId" />
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorName"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Nombre</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorName"
+                    name="proveedorName"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorRif"
+                    class="text-sm font-medium text-(--text-primary)">Rif</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorRif"
+                    name="proveedorRif"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorTelefono"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Teléfono</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorTelefono"
+                    name="proveedorTelefono"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorCorreo"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Correo electrónico</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorCorreo"
+                    name="proveedorCorreo"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorDireccion"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Dirección</label
+                >
+                <textarea
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    id="proveedorDireccion"
+                    name="proveedorDireccion"
+                    required></textarea>
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorCiudad"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Ciudad</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorCiudad"
+                    name="proveedorCiudad"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorCodigoPostal"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Código postal</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="text"
+                    id="proveedorCodigoPostal"
+                    name="proveedorCodigoPostal"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="proveedorState"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Estado</label
+                >
+                <select
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    id="proveedorState"
+                    name="proveedorState"
+                    required
+                >
+                    <option value="">Seleccionar estado</option>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    import { actions } from "astro:actions";
+
+    const form = document.getElementById("subProveedorForm") as HTMLFormElement;
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        console.log("Formulario enviado");
+        const formData = new FormData(form);
+        const idProveedor = Number(formData.get("proveedorId"));
+
+        const name = (
+            document.getElementById("proveedorName") as HTMLInputElement
+        ).value;
+        const rif = (
+            document.getElementById("proveedorRif") as HTMLInputElement
+        ).value;
+        const telefono = (
+            document.getElementById("proveedorTelefono") as HTMLInputElement
+        ).value;
+        const correo = (
+            document.getElementById("proveedorCorreo") as HTMLInputElement
+        ).value;
+        const direccion = (
+            document.getElementById("proveedorDireccion") as HTMLInputElement
+        ).value;
+        const ciudad = (
+            document.getElementById("proveedorCiudad") as HTMLInputElement
+        ).value;
+        const codigoPostal = (
+            document.getElementById("proveedorCodigoPostal") as HTMLInputElement
+        ).value;
+        const estado = (
+            document.getElementById("proveedorState") as HTMLSelectElement
+        ).value;
+
+        if (!idProveedor) {
+            const { data: dataProveedor, error: errorProveedor } =
+                await actions.entrada.addSupplier({
+                    nameProveedor: name,
+                    rifProveedor: Number(rif),
+                    estadoProveedor: Boolean(estado),
+                });
+
+            if (errorProveedor) {
+                console.error("Error al agregar el proveedor:", errorProveedor);
+                return;
+            }
+
+            const idProveedor = Number(dataProveedor.idpersona);
+
+            console.log("ID del proveedor:", idProveedor);
+
+            const { data: dataContacto, error: errorContacto } =
+                await actions.entrada.addSupplierContact({
+                    idpersona: idProveedor,
+                    telefonoProveedor: Number(telefono),
+                    correoProveedor: correo,
+                });
+
+            if (errorContacto) {
+                console.error(
+                    "Error al agregar el contacto del proveedor:",
+                    errorContacto,
+                );
+                return;
+            }
+
+            console.log(
+                "Contacto del proveedor agregado exitosamente:",
+                dataContacto,
+            );
+
+            const { data: dataDireccion, error: errorDireccion } =
+                await actions.entrada.addSupplierDirection({
+                    idpersona: idProveedor,
+                    direccionProveedor: direccion,
+                    ciudadProveedor: ciudad,
+                    codigoPostalProveedor: Number(codigoPostal),
+                });
+
+            if (errorDireccion) {
+                console.error(
+                    "Error al agregar la direccion del proveedor:",
+                    errorDireccion,
+                );
+                return;
+            }
+
+            console.log(
+                "Direccion del proveedor agregada exitosamente:",
+                dataDireccion,
+            );
+
+            const { data: dataTipo, error: errorTipo } =
+                await actions.entrada.asingSupplierType({
+                    idpersona: idProveedor,
+                });
+
+            if (errorTipo) {
+                console.error(
+                    "Error al asignar el tipo de proveedor:",
+                    errorTipo,
+                );
+                return;
+            }
+
+            console.log("Tipo de proveedor asignado exitosamente:", dataTipo);
+        }
+
+        if (idProveedor) {
+            console.log("Proveedor editado exitosamente");
+        }
+
+        form.reset();
+        document
+            .getElementById("SubProveedorModal")
+            ?.classList.remove("active");
+        return;
+    });
+</script>

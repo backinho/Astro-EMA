@@ -60,7 +60,10 @@
                             <option value="2">Categoría 2</option>
                             <option value="3">Categoría 3</option>
                         </select>
-                        <button class="btn btn-secondary btn-sm" id="addCategoryFromForm">
+                        <button
+                            class="btn btn-secondary btn-sm"
+                            id="addCategoryFromForm"
+                        >
                             <svg
                                 class="btn-icon"
                                 viewBox="0 0 24 24"
@@ -148,21 +151,24 @@
 
 <script>
     import { string } from "astro:schema";
-import { imageKit } from "../../imagekit";
+    import { imageKit } from "../../imagekit";
     import { actions } from "astro:actions";
 
     const selectCategory = document.getElementById(
         "productCategory",
     ) as HTMLSelectElement;
 
-    selectCategory.innerHTML = '<option value="">Seleccionar categoría</option>';
+    selectCategory.innerHTML =
+        '<option value="">Seleccionar categoría</option>';
 
     const categories = await actions.inventario.getCategories();
 
     const categoryList = categories?.data?.data ?? [];
 
     if (categoryList.length === 0) {
-        console.warn("No categorias regresadas en actions.inventario.getCategories()");
+        console.warn(
+            "No categorias regresadas en actions.inventario.getCategories()",
+        );
     }
 
     categoryList.forEach((category) => {
@@ -172,7 +178,9 @@ import { imageKit } from "../../imagekit";
         selectCategory.appendChild(option);
     });
 
-    const addCategoryButton = document.getElementById("addCategoryFromForm") as HTMLButtonElement;
+    const addCategoryButton = document.getElementById(
+        "addCategoryFromForm",
+    ) as HTMLButtonElement;
 
     addCategoryButton?.addEventListener("click", (e) => {
         e.preventDefault();
@@ -185,29 +193,41 @@ import { imageKit } from "../../imagekit";
     });
 
     let productFiles = [] as File[];
-    let existingImageUrls = [] as { url: string, idimagen?: number }[];
+    let existingImageUrls = [] as { url: string; idimagen?: number }[];
 
-    document.addEventListener('productEditRequested', (e) => {
+    document.addEventListener("productEditRequested", (e) => {
         const product = (e as CustomEvent).detail.product;
 
         // Resetear el estado de imágenes
         productFiles = [];
         existingImageUrls = [];
-        
+
         // Cargar campos básicos (ya se hace en ProductCard, pero mejor asegurar aquí)
-        (document.getElementById("productId") as HTMLInputElement).value = product.idarticulo.toString();
-        (document.getElementById("productName") as HTMLInputElement).value = product.name; 
-        (document.getElementById("productCode") as HTMLInputElement).value = product.code; 
-        (document.getElementById("productCategory") as HTMLSelectElement).value = product.articulo_categoria[0]?.categoria.idcategoria.toString() || ""; 
-        (document.getElementById("productState") as HTMLSelectElement).value = product.status ? "1" : "0"; 
-        (document.getElementById("productDescription") as HTMLTextAreaElement).value = product.description || ""; 
-        
+        (document.getElementById("productId") as HTMLInputElement).value =
+            product.idarticulo.toString();
+        (document.getElementById("productName") as HTMLInputElement).value =
+            product.name;
+        (document.getElementById("productCode") as HTMLInputElement).value =
+            product.code;
+        (
+            document.getElementById("productCategory") as HTMLSelectElement
+        ).value =
+            product.articulo_categoria[0]?.categoria.idcategoria.toString() ||
+            "";
+        (document.getElementById("productState") as HTMLSelectElement).value =
+            product.status ? "1" : "0";
+        (
+            document.getElementById("productDescription") as HTMLTextAreaElement
+        ).value = product.description || "";
+
         // Cargar URLs de imágenes existentes
         if (product.articulo_imagen && product.articulo_imagen.length > 0) {
-            existingImageUrls = product.articulo_imagen.sort((a: any, b: any) => a.order - b.order).map((img: {image: string, idimagen?: number }) => ({
-                url: img.image,
-                idimagen: img.idimagen
-            }));
+            existingImageUrls = product.articulo_imagen
+                .sort((a: any, b: any) => a.order - b.order)
+                .map((img: { image: string; idimagen?: number }) => ({
+                    url: img.image,
+                    idimagen: img.idimagen,
+                }));
         }
 
         renderProductImages();
@@ -246,12 +266,13 @@ import { imageKit } from "../../imagekit";
         existingImageUrls.forEach(({ url }, index) => {
             const imageWrapper = document.createElement("div");
             const removeButton = document.createElement("button");
-            
+
             removeButton.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" class="w-3 h-3 stroke-[2]">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
                                         <line x1="6" y1="6" x2="18" y2="18"></line>
                                      </svg>`;
-            removeButton.className = "absolute top-(--spacing-xs) right-(--spacing-xs) w-6 h-6 flex items-center justify-center bg-[rgba(239,68,68,0.9)] text-white rounded-full cursor-pointer transition-all duration---transition-fast) hover:bg-(--error-color) hover:scale-110";
+            removeButton.className =
+                "absolute top-(--spacing-xs) right-(--spacing-xs) w-6 h-6 flex items-center justify-center bg-[rgba(239,68,68,0.9)] text-white rounded-full cursor-pointer transition-all duration---transition-fast) hover:bg-(--error-color) hover:scale-110";
 
             removeButton.addEventListener("click", () => {
                 imageWrapper.remove();
@@ -260,7 +281,8 @@ import { imageKit } from "../../imagekit";
                 renderProductImages();
             });
 
-            imageWrapper.className = "relative aspect-square rounded-lg overflow-hidden border border-(--border-color)";
+            imageWrapper.className =
+                "relative aspect-square rounded-lg overflow-hidden border border-(--border-color)";
 
             const img = document.createElement("img") as HTMLImageElement;
             img.src = url; // Usar la URL directamente
@@ -322,45 +344,45 @@ import { imageKit } from "../../imagekit";
 
         console.log("Formulario enviado");
 
-        const productIdEdit = (document.getElementById(
-            "productId",
-        ) as HTMLInputElement).value;
+        const productIdEdit = (
+            document.getElementById("productId") as HTMLInputElement
+        ).value;
 
-        const productName = (document.getElementById(
-            "productName",
-        ) as HTMLInputElement).value;
-        const productCode = (document.getElementById(
-            "productCode",
-        ) as HTMLInputElement).value;
-        const productCategory = (document.getElementById(
-            "productCategory",
-        ) as HTMLSelectElement).value;
-        const productState = (document.getElementById(
-            "productState",
-        ) as HTMLSelectElement).value;
-        const productDescription = (document.getElementById(
-            "productDescription",
-        ) as HTMLTextAreaElement).value;
+        const productName = (
+            document.getElementById("productName") as HTMLInputElement
+        ).value;
+        const productCode = (
+            document.getElementById("productCode") as HTMLInputElement
+        ).value;
+        const productCategory = (
+            document.getElementById("productCategory") as HTMLSelectElement
+        ).value;
+        const productState = (
+            document.getElementById("productState") as HTMLSelectElement
+        ).value;
+        const productDescription = (
+            document.getElementById("productDescription") as HTMLTextAreaElement
+        ).value;
         console.log("Datos del producto:", {
-                productName,
-                productCode,
-                productCategory,
-                productState,
-                productDescription,
-                productImages,
-            });
+            productName,
+            productCode,
+            productCategory,
+            productState,
+            productDescription,
+            productImages,
+        });
 
-        if( productIdEdit ){
-            
+        if (productIdEdit) {
             console.log("Editando producto existente con ID:", productIdEdit);
 
-            const { data: updateData, error: updateError } = await actions.inventario.updateProduct({
-                productId: Number(productIdEdit),
-                name: productName,
-                code: productCode,
-                status: Boolean(productState),
-                description: productDescription,
-            });
+            const { data: updateData, error: updateError } =
+                await actions.inventario.updateProduct({
+                    productId: Number(productIdEdit),
+                    name: productName,
+                    code: productCode,
+                    status: Boolean(productState),
+                    description: productDescription,
+                });
 
             if (updateError) {
                 console.error("Error al actualizar el producto:", updateError);
@@ -371,28 +393,42 @@ import { imageKit } from "../../imagekit";
 
             const productId = Number(productIdEdit);
 
-            const { data: deleteData, error: deleteError } = await actions.inventario.deleteImageFromProduct({
-                productId: productId,
-            })
+            const { data: deleteData, error: deleteError } =
+                await actions.inventario.deleteImageFromProduct({
+                    productId: productId,
+                });
 
             if (deleteError) {
-                console.error("Error al eliminar imágenes del producto:", deleteError);
+                console.error(
+                    "Error al eliminar imágenes del producto:",
+                    deleteError,
+                );
                 return;
             }
 
-            console.log("Imágenes del producto eliminadas exitosamente:", deleteData);
+            console.log(
+                "Imágenes del producto eliminadas exitosamente:",
+                deleteData,
+            );
 
-            const { data: deleteCategoryData, error: deleteCategoryError } = await actions.inventario.deleteCategoryFromProduct({
-                productId: productId,
-                categoryId: Number(productCategory),
-            })
+            const { data: deleteCategoryData, error: deleteCategoryError } =
+                await actions.inventario.deleteCategoryFromProduct({
+                    productId: productId,
+                    categoryId: Number(productCategory),
+                });
 
             if (deleteCategoryError) {
-                console.error("Error al eliminar categorías del producto:", deleteCategoryError);
+                console.error(
+                    "Error al eliminar categorías del producto:",
+                    deleteCategoryError,
+                );
                 return;
             }
 
-            console.log("Categorías del producto eliminadas exitosamente:", deleteCategoryData);
+            console.log(
+                "Categorías del producto eliminadas exitosamente:",
+                deleteCategoryData,
+            );
 
             // Manejar imágenes existentes
             let imageOrder = 0;
@@ -400,15 +436,23 @@ import { imageKit } from "../../imagekit";
             const uploadPromises = productFiles.map(async (file) => {
                 console.log("Subiendo nuevo archivo:", file.name);
                 try {
-                    const authParams = await actions.imageKitServer.getUploadAuthenticationParams();
+                    const authParams =
+                        await actions.imageKitServer.getUploadAuthenticationParams();
                     if (!authParams.data || !authParams.data.signature) {
-                        throw new Error("La Action no devolvió los parámetros de autenticación.");
+                        throw new Error(
+                            "La Action no devolvió los parámetros de autenticación.",
+                        );
                     }
-                    const uploadResponse = await imageKit.uploadFile(file, file.name, authParams.data, {
-                        folder: "/product-images/"
-                    });
+                    const uploadResponse = await imageKit.uploadFile(
+                        file,
+                        file.name,
+                        authParams.data,
+                        {
+                            folder: "/product-images/",
+                        },
+                    );
                     let url = uploadResponse.url;
-                    if(typeof url === "string"){
+                    if (typeof url === "string") {
                         return url;
                     }
                 } catch (error) {
@@ -418,61 +462,83 @@ import { imageKit } from "../../imagekit";
             });
 
             const newUploadedUrls = await Promise.all(uploadPromises);
-            const validNewUrls = newUploadedUrls.filter((url): url is string => typeof url === "string");
+            const validNewUrls = newUploadedUrls.filter(
+                (url): url is string => typeof url === "string",
+            );
 
             const finalImageUrls = [
-                ...existingImageUrls.map(img => img.url),
-                ...validNewUrls
+                ...existingImageUrls.map((img) => img.url),
+                ...validNewUrls,
             ];
 
             for (const imageUrl of finalImageUrls) {
-                if (!imageUrl.startsWith("http")) continue; 
+                if (!imageUrl.startsWith("http")) continue;
 
-                const { data: imageData, error: imageError } = await actions.inventario.addImageToProduct({
-                    productId: productId,
-                    imageUrl: imageUrl,
-                    order: imageOrder,
-                });
+                const { data: imageData, error: imageError } =
+                    await actions.inventario.addImageToProduct({
+                        productId: productId,
+                        imageUrl: imageUrl,
+                        order: imageOrder,
+                    });
 
                 if (imageError) {
-                    console.error("Error al agregar la imagen al producto:", imageError);
+                    console.error(
+                        "Error al agregar la imagen al producto:",
+                        imageError,
+                    );
                     continue;
                 }
 
-                console.log("Imagen agregada al producto exitosamente:", imageData);
+                console.log(
+                    "Imagen agregada al producto exitosamente:",
+                    imageData,
+                );
                 imageOrder++;
             }
 
             for (const categoryId of [Number(productCategory)]) {
-                const { data: categoryData, error: categoryError } = await actions.inventario.addCategoryToProduct({
-                    productId: productId,
-                    categoryId: categoryId,
-                });
+                const { data: categoryData, error: categoryError } =
+                    await actions.inventario.addCategoryToProduct({
+                        productId: productId,
+                        categoryId: categoryId,
+                    });
 
                 if (categoryError) {
-                    console.error("Error al agregar la categoría al producto:", categoryError);
+                    console.error(
+                        "Error al agregar la categoría al producto:",
+                        categoryError,
+                    );
                     continue;
                 }
 
-                console.log("Categoría agregada al producto exitosamente:", categoryData);
+                console.log(
+                    "Categoría agregada al producto exitosamente:",
+                    categoryData,
+                );
             }
-
         } else {
-
             const uploadPromises = productFiles.map(async (file) => {
                 console.log("Subiendo archivo:", file.name);
                 try {
                     console.log("Obteniendo firma de autenticación...");
-                    const authParams = await actions.imageKitServer.getUploadAuthenticationParams(); 
-                    
+                    const authParams =
+                        await actions.imageKitServer.getUploadAuthenticationParams();
+
                     if (!authParams.data || !authParams.data.signature) {
-                        throw new Error("La Action no devolvió los parámetros de autenticación.");
+                        throw new Error(
+                            "La Action no devolvió los parámetros de autenticación.",
+                        );
                     }
-                    const uploadResponse = await imageKit.uploadFile(file, file.name, authParams.data, {
-                        folder: "/product-images/"
-                    });
+                    const uploadResponse = await imageKit.uploadFile(
+                        file,
+                        file.name,
+                        authParams.data,
+                        {
+                            folder: "/product-images/",
+                        },
+                    );
                     let url = uploadResponse.url;
-                    if(typeof url === "string"){
+                    if (typeof url === "string") {
                         return url;
                     }
                 } catch (error) {
@@ -483,10 +549,14 @@ import { imageKit } from "../../imagekit";
 
             const uploadedUrls = await Promise.all(uploadPromises);
 
-            productImages = uploadedUrls.filter((url): url is string => typeof url === "string");
+            productImages = uploadedUrls.filter(
+                (url): url is string => typeof url === "string",
+            );
 
             if (productFiles.length > 0 && productImages.length === 0) {
-                console.error("No se pudo subir ninguna imagen. No se agregará el producto.");
+                console.error(
+                    "No se pudo subir ninguna imagen. No se agregará el producto.",
+                );
                 return;
             }
 
@@ -495,7 +565,7 @@ import { imageKit } from "../../imagekit";
                 code: productCode,
                 status: Boolean(productState),
                 description: productDescription,
-            })
+            });
 
             if (error) {
                 console.error("Error al agregar el producto:", error);
@@ -507,32 +577,46 @@ import { imageKit } from "../../imagekit";
             const productId = data?.productId;
 
             for (const imageUrl of productImages) {
-                const { data: imageData, error: imageError } = await actions.inventario.addImageToProduct({
-                    productId: productId!,
-                    imageUrl: imageUrl,
-                    order: productImages.indexOf(imageUrl),
-                });
+                const { data: imageData, error: imageError } =
+                    await actions.inventario.addImageToProduct({
+                        productId: productId!,
+                        imageUrl: imageUrl,
+                        order: productImages.indexOf(imageUrl),
+                    });
 
                 if (imageError) {
-                    console.error("Error al agregar la imagen al producto:", imageError);
+                    console.error(
+                        "Error al agregar la imagen al producto:",
+                        imageError,
+                    );
                     continue;
                 }
 
-                console.log("Imagen agregada al producto exitosamente:", imageData);
+                console.log(
+                    "Imagen agregada al producto exitosamente:",
+                    imageData,
+                );
             }
 
             for (const categoryId of [Number(productCategory)]) {
-                const { data: categoryData, error: categoryError } = await actions.inventario.addCategoryToProduct({
-                    productId: productId!,
-                    categoryId: categoryId,
-                });
+                const { data: categoryData, error: categoryError } =
+                    await actions.inventario.addCategoryToProduct({
+                        productId: productId!,
+                        categoryId: categoryId,
+                    });
 
                 if (categoryError) {
-                    console.error("Error al agregar la categoría al producto:", categoryError);
+                    console.error(
+                        "Error al agregar la categoría al producto:",
+                        categoryError,
+                    );
                     continue;
                 }
 
-                console.log("Categoría agregada al producto exitosamente:", categoryData);
+                console.log(
+                    "Categoría agregada al producto exitosamente:",
+                    categoryData,
+                );
             }
         }
 
