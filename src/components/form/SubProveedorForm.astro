@@ -234,13 +234,103 @@
             }
 
             console.log("Tipo de proveedor asignado exitosamente:", dataTipo);
-        }
-
-        if (idProveedor) {
+        } else {
             console.log("Proveedor editado exitosamente");
+            const { data: dataEdit, error: errorEdit } =
+                await actions.entrada.editSupplier({
+                    idpersona: idProveedor,
+                    nameProveedor: name,
+                    rifProveedor: Number(rif),
+                    estadoProveedor: Boolean(estado),
+                });
+
+            if (errorEdit) {
+                console.error("Error al editar el proveedor:", errorEdit);
+                return;
+            }
+
+            console.log("Proveedor editado exitosamente:", dataEdit);
+
+            const { data: dataDeleteContact, error: errorDeleteContact } =
+                await actions.entrada.deleteSupplierContact({
+                    idpersona: idProveedor,
+                });
+
+            if (errorDeleteContact) {
+                console.error(
+                    "Error al eliminar el contacto del proveedor:",
+                    errorDeleteContact,
+                );
+                return;
+            }
+
+            console.log(
+                "Contacto del proveedor eliminado exitosamente:",
+                dataDeleteContact,
+            );
+
+            const { data: dataContact, error: errorContact } =
+                await actions.entrada.addSupplierContact({
+                    idpersona: idProveedor,
+                    telefonoProveedor: Number(telefono),
+                    correoProveedor: correo,
+                });
+
+            if (errorContact) {
+                console.error(
+                    "Error al agregar el contacto del proveedor:",
+                    errorContact,
+                );
+                return;
+            }
+
+            console.log(
+                "Contacto del proveedor agregado exitosamente:",
+                dataContact,
+            );
+
+            const { data: dataDeleteDirection, error: errorDeleteDirection } =
+                await actions.entrada.deleteSupplierDirection({
+                    idpersona: idProveedor,
+                });
+
+            if (errorDeleteDirection) {
+                console.error(
+                    "Error al eliminar la direccion del proveedor:",
+                    errorDeleteDirection,
+                );
+                return;
+            }
+
+            console.log(
+                "Direccion del proveedor eliminada exitosamente:",
+                dataDeleteDirection,
+            );
+
+            const { data: dataDirection, error: errorDirection } =
+                await actions.entrada.addSupplierDirection({
+                    idpersona: idProveedor,
+                    direccionProveedor: direccion,
+                    ciudadProveedor: ciudad,
+                    codigoPostalProveedor: Number(codigoPostal),
+                });
+
+            if (errorDirection) {
+                console.error(
+                    "Error al agregar la direccion del proveedor:",
+                    errorDirection,
+                );
+                return;
+            }
+
+            console.log(
+                "Direccion del proveedor agregada exitosamente:",
+                dataDirection,
+            );
         }
 
         form.reset();
+        window.updateSuppliersList();
         document
             .getElementById("SubProveedorModal")
             ?.classList.remove("active");

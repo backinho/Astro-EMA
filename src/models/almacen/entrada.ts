@@ -13,6 +13,20 @@ export async function getEntries() {
     return { data: entries, error: null };
 }
 
+export async function getSuppliers() {
+    const { data: suppliers, error } = await supabase
+        .from('personas')
+        .select('*, contacto(*), direccion(*), tipo_persona!inner(type)')
+        .eq('tipo_persona.type', 'proveedor')
+
+    if (error) {
+        console.error('Error al obtener los proveedores:', error);
+        return { data: null, error };
+    }
+
+    return { data: suppliers, error: null };
+}
+
 export async function addSupplier(nombre: string, tipo_documento: string, nro_documento: number, estado: boolean) {
     const { data, error } = await supabase
         .from('personas')
@@ -32,6 +46,39 @@ export async function addSupplier(nombre: string, tipo_documento: string, nro_do
     return { data: data[0].idpersona, error: null };
 }
 
+export async function editSupplier(idpersona: number, nombre: string, tipo_documento: string, nro_documento: number, estado: boolean) {
+    const { data, error } = await supabase
+        .from('personas')
+        .update({
+            nombre: nombre,
+            tipo_documento: tipo_documento,
+            nro_documento: nro_documento,
+            estado: estado,
+        })
+        .eq('idpersona', idpersona)
+
+    if (error) {
+        console.error('Error al editar el proveedor:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}
+
+export async function deleteSupplier(idpersona: number) {
+    const { data, error } = await supabase
+        .from('personas')
+        .delete()
+        .eq('idpersona', idpersona)
+
+    if (error) {
+        console.error('Error al eliminar el proveedor:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}
+
 export async function addSupplierContact(idpersona: number, phone: number, email: string) {
     const { data, error } = await supabase
         .from('contacto')
@@ -43,6 +90,20 @@ export async function addSupplierContact(idpersona: number, phone: number, email
 
     if (error) {
         console.error('Error al agregar el contacto del proveedor:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}
+
+export async function deleteSupplierContact(idpersona: number) {
+    const { data, error } = await supabase
+        .from('contacto')
+        .delete()
+        .eq('idpersona', idpersona)
+
+    if (error) {
+        console.error('Error al eliminar el contacto del proveedor:', error);
         return { data: null, error };
     }
 
@@ -61,6 +122,20 @@ export async function addSupplierDirection(idpersona: number, address: string, c
 
     if (error) {
         console.error('Error al agregar la dirección del proveedor:', error);
+        return { data: null, error };
+    }
+
+    return { data: data, error: null };
+}
+
+export async function deleteSupplierDirection(idpersona: number) {
+    const { data, error } = await supabase
+        .from('direccion')
+        .delete()
+        .eq('idpersona', idpersona)
+
+    if (error) {
+        console.error('Error al eliminar la dirección del proveedor:', error);
         return { data: null, error };
     }
 
