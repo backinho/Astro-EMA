@@ -50,7 +50,7 @@
     }
 
     function renderProducts(products: Product[]) {
-        const grid = document.getElementById("product-grid");
+        const grid = document.getElementById("product-grid") as HTMLDivElement;
 
         if (!grid) {
             console.error(

@@ -4,6 +4,7 @@ import CategoryForm from "../form/CategoryForm.astro";
 import ProductDetails from "../form/ProductDetails.astro";
 import ProveedorForm from "../form/ProveedorForm.astro";
 import EntryForm from "../form/EntryForm.astro";
+import SubProductForm from "../form/SubProductForm.astro";
 
 interface Props {
     title: string;
@@ -23,6 +24,7 @@ const formSection: Record<string, any> = {
     productDetailsForm: ProductDetails,
     proveedorForm: ProveedorForm,
     entryForm: EntryForm,
+    subProductoForm: SubProductForm,
 };
 
 const FormSection = formSection[form];

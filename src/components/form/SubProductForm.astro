@@ -1,0 +1,278 @@
+<div class="mb-(--spacing-lg)">
+    <div class="relative w-full">
+        <svg
+            class="absolute left-(--spacing-sm) top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-(--text-muted)"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+        >
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input
+            type="text"
+            class="w-full pl-10 p-(--spacing-sm) border border-(--border-color) rounded-(--radius-lg) bg-(--bg-secondary) text-(--text-primary) text-[0.875rem] transition-all duration-200
+           focus:outline-none focus:border-(--primary-color) focus:bg-(--bg-primary) focus:ring-3 focus:ring-blue-500/10"
+            placeholder="Buscar..."
+        />
+    </div>
+</div>
+<div
+    class="products-selection-grid"
+    id="product-select-grid"
+>
+</div>
+
+<script>
+    import { actions } from "astro:actions";
+
+    let products = [];
+    let tempSelectedProducts: any[] = [];
+
+    declare global {
+        interface Window {
+            actions: any;
+            tempSelectedProducts: any[];
+        }
+    }
+
+    interface Categoria {
+        name: string;
+        idcategoria: string | number;
+    }
+
+    interface ArticuloCategoria {
+        categoria: Categoria;
+    }
+
+    interface ArticuloImagen {
+        image: string;
+        order: number;
+    }
+
+    interface Product {
+        idarticulo: number;
+        name: string;
+        code: string;
+        price: number | string | null;
+        stock: number | null;
+        articulo_imagen: ArticuloImagen[];
+        articulo_categoria: ArticuloCategoria[];
+    }
+
+    async function fetchRenderProductsInModal() {
+        const inventario = await actions.inventario.getInventario();
+
+        products = inventario.data?.data || [];
+
+        console.log("Productos obtenidos:", products);
+
+        renderProductsInModal(products);
+    }
+
+    fetchRenderProductsInModal();
+
+    function renderProductsInModal(products: Product[]) {
+        const grid = document.getElementById(
+            "product-select-grid",
+        ) as HTMLDivElement;
+
+        if (!grid) {
+            console.error("No se encontró el contenedor de productos.");
+            return;
+        }
+
+        if (!products || products.length === 0) {
+            grid.innerHTML = `
+                    <div class="no-products">
+                        <svg class="no-products-icon" fill="none" stroke="currentColor"  xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="-1 -1 27 27" preserveAspectRatio="xMidYMid meet">
+                            <path d="m24.008,23.3l-6.598-6.597c1.607-1.775,2.596-4.12,2.596-6.697C20.006,4.492,15.52.006,10.006.006S.006,4.492.006,10.006s4.486,10,10,10c2.577,0,4.922-.989,6.697-2.596l6.598,6.597.707-.707ZM1.006,10.006C1.006,5.043,5.043,1.006,10.006,1.006s9,4.038,9,9-4.037,9-9,9S1.006,14.968,1.006,10.006Zm12.947-3.252l-3.247,3.246,3.247,3.246-.707.707-3.247-3.246-3.247,3.246-.707-.707,3.247-3.246-3.247-3.246.707-.707,3.247,3.246,3.247-3.246.707.707Z"/>
+                        </svg>
+                        <h3>No se encontraron productos</h3>
+                        <p>Prueba ajustando los filtros o agrega un nuevo producto.</p>
+                    </div>
+                `;
+            return;
+        }
+
+        grid.innerHTML = products
+            .map((product) => {
+                const imageUrl =
+                    product.articulo_imagen && product.articulo_imagen.length
+                        ? product.articulo_imagen[0].image
+                        : "";
+                const categories =
+                    product.articulo_categoria &&
+                    product.articulo_categoria.length
+                        ? product.articulo_categoria
+                              .map((c) => c.categoria.name)
+                              .join(", ")
+                        : "";
+                const price =
+                    product.price == null
+                        ? "—"
+                        : typeof product.price === "number"
+                          ? product.price.toFixed(2)
+                          : product.price;
+
+                return `
+                    <div class="product-selection-card ${tempSelectedProducts.some((p) => p.id === product.idarticulo) ? "selected" : ""}" 
+                        data-product-id="${product.idarticulo}">
+                        <div class="product-image">
+                            <img src="${imageUrl}" 
+                                alt="${product.name}">
+                        </div>
+                        <div class="product-info">
+                            <h4 class="product-name">${product.name}</h4>
+                            <p class="product-code">${product.code}</p>
+                            <p class="product-category">${categories || "Sin categoría"}</p>
+                            <p class="product-price">$${Number(price ?? 0).toFixed(2)}</p>
+                        </div>
+                        <div class="product-selection-overlay">
+                            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="20,6 9,17 4,12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+        })
+        .join("");
+
+        document.querySelectorAll(".product-selection-card").forEach((card) => {
+            card.addEventListener("click", () => {
+                const productId = parseInt(
+                    card.getAttribute("data-product-id") || "0",
+                );
+                const product = products.find(
+                    (p) => p.idarticulo === productId,
+                );
+                if (!product) return;
+
+                const index = tempSelectedProducts.findIndex(
+                    (p) => p.id === productId,
+                );
+                if (index > -1) {
+                    tempSelectedProducts.splice(index, 1);
+                    card.classList.remove("selected");
+                } else {
+                    tempSelectedProducts.push({
+                        id: product.idarticulo,
+                        name: product.name,
+                        code: product.code,
+                        price: product.price,
+                        image: product.articulo_imagen[0]
+                            ? product.articulo_imagen[0].image
+                            : "",
+                    });
+                    card.classList.add("selected");
+                }
+
+                window.dispatchEvent(new CustomEvent('syncProducts', { 
+                    detail: tempSelectedProducts 
+                }));
+            });
+        });
+    }
+
+    window.tempSelectedProducts = tempSelectedProducts;
+</script>
+
+<style is:global>
+    .products-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--spacing-md);
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    .product-selection-card {
+        background: var(--bg-primary);
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--border-color);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        position: relative;
+    }
+
+    .product-selection-card:hover {
+        border-color: var(--primary-light);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .product-selection-card.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(59, 130, 246, 0.05);
+    }
+
+    .product-selection-card .product-image {
+        height: 120px;
+        overflow: hidden;
+    }
+
+    .product-selection-card .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-selection-card .product-info {
+        padding: var(--spacing-md);
+    }
+
+    .product-selection-card .product-name {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: var(--spacing-xs);
+        line-height: 1.3;
+    }
+
+    .product-selection-card .product-code {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .product-selection-card .product-category {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--spacing-xs);
+    }
+
+    .product-selection-card .product-price {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .product-selection-overlay {
+        position: absolute;
+        top: var(--spacing-sm);
+        right: var(--spacing-sm);
+        width: 24px;
+        height: 24px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.8);
+        transition: all var(--transition-fast);
+    }
+
+    .product-selection-card.selected .product-selection-overlay {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    .check-icon {
+        width: 14px;
+        height: 14px;
+        color: white;
+        stroke-width: 3;
+    }
+</style>

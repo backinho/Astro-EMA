@@ -218,7 +218,7 @@
             <button
                 type="button"
                 id="openProductBtn"
-                class="w-full flex items-center justify-center gap-2 p-4 border-2 border-dashed border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] hover:bg-blue-500/5 hover:border-blue-500/50 transition-all group"
+                class="w-full cursor-pointer flex items-center justify-center gap-2 p-4 border-2 border-dashed border-[var(--border-color)] rounded-xl bg-[var(--bg-secondary)] hover:bg-blue-500/5 hover:border-blue-500/50 transition-all group"
             >
                 <div
                     class="flex items-center gap-2 text-blue-500 group-hover:scale-105 transition-transform"
@@ -237,7 +237,7 @@
                             d="M12 4v16m8-8H4"></path>
                     </svg>
                     <span class="text-sm font-medium"
-                        >Agregar otro producto</span
+                        >Agregar producto</span
                     >
                 </div>
             </button>
@@ -305,6 +305,8 @@
     </div>
 </form>
 <script>
+    import { actions } from "astro:actions";
+
     const input = document.getElementById(
         "entryImage",
     ) as HTMLInputElement | null;
@@ -349,8 +351,7 @@
         preview?.classList.add("hidden");
         if (imgPreview) imgPreview.src = "";
     });
-</script>
-<script>
+
     function updateCounter() {
         const count = document.querySelectorAll(".product-item").length;
         const counterElement = document.getElementById("productCounter");
@@ -359,13 +360,9 @@
         }
     }
 
-    function addProductToList(
-        id: string | number,
-        name: string,
-        price: string | number,
-    ) {
-        const list = document.getElementById("productList");
-        const template = document.getElementById(
+    function addProductToList(product: any[]) {
+        const list = document.getElementById("productList") as HTMLElement | null;
+        /*const template = document.getElementById(
             "productTemplate",
         ) as HTMLTemplateElement | null;
 
@@ -384,10 +381,85 @@
         const inputEl = clone.querySelector(
             ".product-id-input",
         ) as HTMLInputElement | null;
-        if (inputEl) inputEl.value = String(id);
+        if (inputEl) inputEl.value = String(id);*/
+
+        if (!list) {
+            console.error("No se encontró el contenedor de productos.");
+            return;
+        };
+
+        console.log("Añadiendo producto:", product);
+
+        list.innerHTML = product.map((products) => {
+            const imageUrl = products.image;
+            const price = products.price;
+            const code = products.code;
+            const id = products.idarticulo;
+            const name = products.name;
+
+            return `
+                        <div
+                    class="product-item flex items-center justify-between px-4 py-3 border border-blue-500/30 rounded-xl bg-[var(--bg-secondary)] animate-in slide-in-from-left-2 duration-200"
+                >
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div
+                            class="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-500 shrink-0"
+                        >
+                            <img src="${imageUrl}" alt="${name}" class="w-full h-full object-cover rounded-lg" />
+                        </div>
+                        <div class="flex flex-col truncate">
+                            <span
+                                class="product-name text-sm font-semibold truncate text-[var(--text-primary)]"
+                            >${name}</span>
+                            <span
+                                class="product-detail text-xs text-[var(--text-secondary)] opacity-70"
+                            >${code} • $${price}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button
+                            type="button"
+                            class="config-product-btn cursor-pointer p-2 bg-blue-500/10 hover:bg-blue-500/20 hover:scale-110 text-[var(--primary-color)] rounded-lg transition-all border border-blue-500/10"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="remove-product-btn cursor-pointer p-2 bg-red-500/10 hover:bg-red-500/20 hover:scale-110 text-[var(--error-color)] rounded-lg transition-all border border-red-500/10"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                `
+
+        }).join('')
 
         // Helper to remove item
-        const removeBtn = clone.querySelector(".remove-product-btn");
+        //onst removeBtn = clone.querySelector(".remove-product-btn");
         if (removeBtn) {
             removeBtn.addEventListener("click", (e) => {
                 const item = (e.target as HTMLElement).closest(".product-item");
@@ -396,8 +468,6 @@
             });
         }
 
-        // Agregar a la lista
-        list.appendChild(clone);
         updateCounter();
     }
 
@@ -405,11 +475,31 @@
     function openProductModal() {
         // Aquí abrirías tu modal real.
         // Simulamos que el usuario selecciona un producto aleatorio:
-        const randomId = Math.floor(Math.random() * 1000);
-        addProductToList(randomId, "Producto Ejemplo " + randomId, "99.99");
+        //const randomId = Math.floor(Math.random() * 1000);
+        //addProductToList(randomId, "Producto Ejemplo " + randomId, "99.99");
+
+        const modal = document.getElementById("subProductoModal");
+        modal?.classList.add("active");
     }
+
+    let selectedProducts: Array<{ id: string | number; name: string; price: string | number; image: string }> = [];
+
+    window.addEventListener('syncProducts', (event) => {
+        const products = (event as CustomEvent<any>).detail; // Este es el array completo
+
+        const list = document.getElementById("productList");
+        if (!list) return;
+
+        // Limpiar la lista actual para evitar duplicados al re-renderizar
+        list.innerHTML = '';
+
+        // Iterar sobre el array de objetos completo
+        addProductToList(products);
+    });
 
     document
         .getElementById("openProductBtn")
-        ?.addEventListener("click", openProductModal);
+        ?.addEventListener("click", () => {
+            openProductModal();        
+        });
 </script>
