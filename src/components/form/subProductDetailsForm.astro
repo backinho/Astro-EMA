@@ -1,0 +1,86 @@
+<form id="subProductDetailsForm" class="form-class">
+    <div
+        class="bg-(--bg-secondary) p-(--spacing-lg) rounded-lg border border-(--border-color)"
+    >
+        <h3
+            class="text-lg font-semibold text-(--text-primary) mb-(--spacing-md) pb-(--spacing-sm) border-b border-(--border-color)"
+        >
+            Detalles de la entrada
+        </h3>
+        <div class="grid gap-(--spacing-lg)">
+            <input type="hidden" name="subProductId" id="subProductId" />
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="entryQuantity"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Cantidad</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="number"
+                    id="entryQuantity"
+                    name="entryQuantity"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="entryPrice"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Precio de compra</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="number"
+                    id="entryPrice"
+                    name="entryPrice"
+                    required
+                />
+            </div>
+            <div class="flex flex-col gap-(--spacing-sm)">
+                <label
+                    for="entrySalePrice"
+                    class="text-sm font-medium text-(--text-primary)"
+                    >Precio de venta</label
+                >
+                <input
+                    class="p-(--spacing-sm) px-(--spacing-md) border border-(--border-color) rounded-lg bg-(--bg-secondary) text-(--text-primary) text-sm transition focus:outline-none focus:border-(--border-focus) focus:ring-2 focus:ring-blue-500/10"
+                    type="number"
+                    id="entrySalePrice"
+                    name="entrySalePrice"
+                    required
+                />
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    const form = document.getElementById(
+        "subProductDetailsForm",
+    ) as HTMLFormElement;
+
+    form?.addEventListener("input", (e) => {
+        const formData = new FormData(form);
+        const productId = formData.get("subProductId");
+
+        const updatedData = {
+            id: productId ? parseInt(productId.toString()) : null,
+            quantity: parseFloat(
+                formData.get("entryQuantity")?.toString() || "0",
+            ),
+            price: parseFloat(formData.get("entryPrice")?.toString() || "0"),
+            salePrice: parseFloat(
+                formData.get("entrySalePrice")?.toString() || "0",
+            ),
+        };
+
+        if (updatedData.id) {
+            window.dispatchEvent(
+                new CustomEvent("updateProductDetails", {
+                    detail: updatedData,
+                }),
+            );
+        }
+    });
+</script>

@@ -13,6 +13,48 @@ export async function getEntries() {
     return { data: entries, error: null };
 }
 
+export async function addEntry(idproveedor: number, idusuario: number, receipt_type: string, receipt_number: number, image: string, entry_date: string, purchase_total: number) {
+    const { data, error } = await supabase
+        .from('entrada')
+        .insert({
+            idproveedor: idproveedor,
+            idusuario: idusuario,
+            receipt_type: receipt_type,
+            receipt_number: receipt_number,
+            image: image,
+            purchase_total: purchase_total,
+            entry_date: entry_date,
+        })
+        .select('identrada')
+
+    if (error) {
+        console.error('Error al agregar la entrada:', error);
+        return { data: null, error };
+    }
+
+    return { data: data[0].identrada, error: null };
+}
+
+export async function addEntryDetail(identrada: number, idarticulo: number, cantidad: number, purchase_price: number, sale_price: number) {
+    const { data, error } = await supabase
+        .from('entrada_detalle')
+        .insert({
+            identrada: identrada,
+            idarticulo: idarticulo,
+            cantidad: cantidad,
+            purchase_price: purchase_price,
+            sale_price: sale_price,
+        })
+        .select('identrada_detalle')
+
+    if (error) {
+        console.error('Error al agregar el detalle de la entrada:', error);
+        return { data: null, error };
+    }
+
+    return { data: data[0].identrada_detalle, error: null };
+}
+
 export async function getSuppliers() {
     const { data: suppliers, error } = await supabase
         .from('personas')

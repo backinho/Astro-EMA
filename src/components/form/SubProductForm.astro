@@ -17,11 +17,7 @@
         />
     </div>
 </div>
-<div
-    class="products-selection-grid"
-    id="product-select-grid"
->
-</div>
+<div class="products-selection-grid" id="product-select-grid"></div>
 
 <script>
     import { actions } from "astro:actions";
@@ -135,8 +131,8 @@
                         </div>
                     </div>
                 `;
-        })
-        .join("");
+            })
+            .join("");
 
         document.querySelectorAll(".product-selection-card").forEach((card) => {
             card.addEventListener("click", () => {
@@ -160,6 +156,8 @@
                         name: product.name,
                         code: product.code,
                         price: product.price,
+                        salePrice: 0,
+                        quantity: 1,
                         image: product.articulo_imagen[0]
                             ? product.articulo_imagen[0].image
                             : "",
@@ -167,14 +165,49 @@
                     card.classList.add("selected");
                 }
 
-                window.dispatchEvent(new CustomEvent('syncProducts', { 
-                    detail: tempSelectedProducts 
-                }));
+                window.dispatchEvent(
+                    new CustomEvent("syncProducts", {
+                        detail: tempSelectedProducts,
+                    }),
+                );
             });
         });
     }
 
     window.tempSelectedProducts = tempSelectedProducts;
+
+    window.addEventListener("productRemoved", (event) => {
+        const { id } = (event as CustomEvent).detail;
+
+        const index = tempSelectedProducts.findIndex((p) => p.id === id);
+        if (index > -1) {
+            tempSelectedProducts.splice(index, 1);
+        }
+
+        const card = document.querySelector(
+            `.product-selection-card[data-product-id="${id}"]`,
+        );
+        if (card) {
+            card.classList.remove("selected");
+        }
+    });
+
+    window.addEventListener("updateProductDetails", (event: any) => {
+        const { id, quantity, price, salePrice } = event.detail;
+
+        const productIndex = tempSelectedProducts.findIndex((p) => p.id === id);
+
+        if (productIndex > -1) {
+            tempSelectedProducts[productIndex].quantity = quantity;
+            tempSelectedProducts[productIndex].price = price;
+            tempSelectedProducts[productIndex].salePrice = salePrice;
+            window.dispatchEvent(
+                new CustomEvent("syncProducts", {
+                    detail: tempSelectedProducts,
+                }),
+            );
+        }
+    });
 </script>
 
 <style is:global>

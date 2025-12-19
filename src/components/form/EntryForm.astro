@@ -24,8 +24,8 @@
                     >
                         <option value="">Seleccionar proveedor</option>
                         <option value="1">Proveedor 1</option>
-                        <option value="2">Proveedor 2</option>
-                        <option value="3">Proveedor 3</option>
+                        <option value="5">Proveedor 2</option>
+                        <option value="7">Proveedor 3</option>
                     </select>
                     <button
                         class="btn btn-secondary btn-sm"
@@ -236,9 +236,7 @@
                             stroke-width="2"
                             d="M12 4v16m8-8H4"></path>
                     </svg>
-                    <span class="text-sm font-medium"
-                        >Agregar producto</span
-                    >
+                    <span class="text-sm font-medium">Agregar producto</span>
                 </div>
             </button>
         </div>
@@ -306,6 +304,7 @@
 </form>
 <script>
     import { actions } from "astro:actions";
+    import { imageKit } from "../../imagekit";
 
     const input = document.getElementById(
         "entryImage",
@@ -322,15 +321,11 @@
     input?.addEventListener("change", function (e) {
         const file = (this as HTMLInputElement).files?.[0];
         if (file) {
-            // Actualizar UI
             if (fileNameSpan) fileNameSpan.textContent = file.name;
             dropzone?.classList.add("hidden");
             preview?.classList.remove("hidden");
-
-            // Bloquear el input para que no interfiera con el botón de borrar
             input.classList.add("hidden");
 
-            // Leer miniatura (opcional pero recomendado)
             const reader = new FileReader();
             reader.onload = function (e) {
                 if (imgPreview && e.target?.result) {
@@ -361,45 +356,34 @@
     }
 
     function addProductToList(product: any[]) {
-        const list = document.getElementById("productList") as HTMLElement | null;
-        /*const template = document.getElementById(
-            "productTemplate",
-        ) as HTMLTemplateElement | null;
-
-        if (!list || !template) return;
-
-        // Clonar el template
-        const clone = template.content.cloneNode(true) as DocumentFragment;
-
-        // Llenar datos
-        const nameEl = clone.querySelector(".product-name");
-        if (nameEl) nameEl.textContent = name;
-
-        const detailEl = clone.querySelector(".product-detail");
-        if (detailEl) detailEl.textContent = `ID: #${id} • $${price}`;
-
-        const inputEl = clone.querySelector(
-            ".product-id-input",
-        ) as HTMLInputElement | null;
-        if (inputEl) inputEl.value = String(id);*/
+        const list = document.getElementById(
+            "productList",
+        ) as HTMLElement | null;
 
         if (!list) {
             console.error("No se encontró el contenedor de productos.");
             return;
-        };
+        }
 
         console.log("Añadiendo producto:", product);
 
-        list.innerHTML = product.map((products) => {
-            const imageUrl = products.image;
-            const price = products.price;
-            const code = products.code;
-            const id = products.idarticulo;
-            const name = products.name;
+        list.innerHTML = product
+            .map((products) => {
+                const imageUrl = products.image;
+                const price = products.price;
+                const code = products.code;
+                const id = products.id;
+                const name = products.name;
+                const quantity = products.quantity;
+                const salePrice = products.salePrice || 0;
 
-            return `
+                return `
                         <div
                     class="product-item flex items-center justify-between px-4 py-3 border border-blue-500/30 rounded-xl bg-[var(--bg-secondary)] animate-in slide-in-from-left-2 duration-200"
+                    data-id="${id}"
+                    data-price="${price}"
+                    data-sale-price="${salePrice}"
+                    data-quantity="${quantity}"
                 >
                     <div class="flex items-center gap-3 overflow-hidden">
                         <div
@@ -413,13 +397,15 @@
                             >${name}</span>
                             <span
                                 class="product-detail text-xs text-[var(--text-secondary)] opacity-70"
-                            >${code} • $${price}</span>
+                            >${code} • Precio de compra: $${price} • Precio de venta: $${salePrice} • Cantidad: ${quantity} ${quantity > 1 ? "unidades" : "unidad"}</span>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2">
                         <button
                             type="button"
+                            data-id="${id}"
+                            id="configProductBtn"
                             class="config-product-btn cursor-pointer p-2 bg-blue-500/10 hover:bg-blue-500/20 hover:scale-110 text-[var(--primary-color)] rounded-lg transition-all border border-blue-500/10"
                         >
                             <svg
@@ -436,6 +422,8 @@
 
                         <button
                             type="button"
+                            data-id="${id}"
+                            id="removeProductBtn"
                             class="remove-product-btn cursor-pointer p-2 bg-red-500/10 hover:bg-red-500/20 hover:scale-110 text-[var(--error-color)] rounded-lg transition-all border border-red-500/10"
                         >
                             <svg
@@ -454,52 +442,209 @@
                         </button>
                     </div>
                 </div>
-                `
+                `;
+            })
+            .join("");
 
-        }).join('')
-
-        // Helper to remove item
-        //onst removeBtn = clone.querySelector(".remove-product-btn");
-        if (removeBtn) {
-            removeBtn.addEventListener("click", (e) => {
-                const item = (e.target as HTMLElement).closest(".product-item");
-                item?.remove();
-                updateCounter();
-            });
-        }
-
+        attachEventListeners();
         updateCounter();
     }
 
-    // Simulación: Llamada desde tu modal
-    function openProductModal() {
-        // Aquí abrirías tu modal real.
-        // Simulamos que el usuario selecciona un producto aleatorio:
-        //const randomId = Math.floor(Math.random() * 1000);
-        //addProductToList(randomId, "Producto Ejemplo " + randomId, "99.99");
+    function attachEventListeners() {
+        const removeBtns = document.querySelectorAll(".remove-product-btn");
+        removeBtns.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const button = e.currentTarget as HTMLButtonElement;
+                const productId = button.getAttribute("data-id");
+                const item = button.closest(".product-item");
 
+                if (productId) {
+                    window.dispatchEvent(
+                        new CustomEvent("productRemoved", {
+                            detail: { id: parseInt(productId) },
+                        }),
+                    );
+                }
+
+                item?.remove();
+                updateCounter();
+            });
+        });
+        const configBtns = document.querySelectorAll(".config-product-btn");
+        configBtns.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                const button = e.currentTarget as HTMLButtonElement;
+                const productId = button.getAttribute("data-id");
+
+                // Buscar el producto en el array global (debe estar accesible)
+                const product = window.tempSelectedProducts.find(
+                    (p) => p.id == productId,
+                );
+
+                if (product) {
+                    // Llenar los campos del formulario subProductDetailsForm
+                    const idInput = document.getElementById(
+                        "subProductId",
+                    ) as HTMLInputElement;
+                    const qtyInput = document.getElementById(
+                        "entryQuantity",
+                    ) as HTMLInputElement;
+                    const priceInput = document.getElementById(
+                        "entryPrice",
+                    ) as HTMLInputElement;
+                    const salePriceInput = document.getElementById(
+                        "entrySalePrice",
+                    ) as HTMLInputElement;
+
+                    if (idInput) idInput.value = product.id.toString();
+                    if (qtyInput) qtyInput.value = product.quantity.toString();
+                    if (priceInput) priceInput.value = product.price.toString();
+                    if (salePriceInput)
+                        salePriceInput.value = product.salePrice.toString();
+                }
+
+                const modal = document.getElementById("subProductDetailsModal");
+                modal?.classList.add("active");
+            });
+        });
+    }
+
+    function openProductModal() {
         const modal = document.getElementById("subProductoModal");
         modal?.classList.add("active");
     }
 
-    let selectedProducts: Array<{ id: string | number; name: string; price: string | number; image: string }> = [];
-
-    window.addEventListener('syncProducts', (event) => {
-        const products = (event as CustomEvent<any>).detail; // Este es el array completo
+    window.addEventListener("syncProducts", (event) => {
+        const products = (event as CustomEvent<any>).detail;
 
         const list = document.getElementById("productList");
         if (!list) return;
-
-        // Limpiar la lista actual para evitar duplicados al re-renderizar
-        list.innerHTML = '';
+        list.innerHTML = "";
 
         // Iterar sobre el array de objetos completo
         addProductToList(products);
     });
 
-    document
-        .getElementById("openProductBtn")
-        ?.addEventListener("click", () => {
-            openProductModal();        
+    document.getElementById("openProductBtn")?.addEventListener("click", () => {
+        openProductModal();
+    });
+
+    const form = document.getElementById("entryForm");
+
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const proveedor = (
+            document.getElementById("entrySupplier") as HTMLInputElement
+        ).value;
+
+        const fecha = (document.getElementById("entryDate") as HTMLInputElement)
+            .value;
+
+        const tipo = (document.getElementById("entryType") as HTMLSelectElement)
+            .value;
+
+        const numero = (
+            document.getElementById("entryNumber") as HTMLInputElement
+        ).value;
+
+        const entryImage = document.getElementById(
+            "entryImage",
+        ) as HTMLInputElement;
+
+        const files = entryImage.files?.[0];
+
+        const products = Array.from(
+            document.querySelectorAll(".product-item"),
+        ).map((item) => {
+            const id = item.getAttribute("data-id");
+            const qty = item.getAttribute("data-quantity");
+            const price = item.getAttribute("data-price");
+            const salePrice = item.getAttribute("data-sale-price");
+            const purchase_total =
+                parseInt(price ?? "0") * parseInt(qty ?? "0");
+            return { id, qty, price, salePrice, purchase_total };
         });
+
+        const purchase_total = products.reduce(
+            (acc, product) => acc + product.purchase_total,
+            0,
+        );
+
+        const { data: authData, error: authError } =
+            await actions.imageKitServer.getUploadAuthenticationParams();
+
+        if (authError || !authData) {
+            console.error(
+                "Error al obtener los parámetros de autenticación",
+                authError,
+            );
+            return;
+        }
+
+        console.log(authData);
+
+        if (!files) {
+            console.error("No file selected");
+            return;
+        }
+
+        let uploadUrl = "";
+        try {
+            const uploadResponse = await imageKit.uploadFile(
+                files,
+                numero,
+                authData,
+                {
+                    folder: "/entry-images/",
+                },
+            );
+            if (uploadResponse.url) {
+                uploadUrl = uploadResponse.url;
+            } else {
+                console.error("Upload successful but no URL returned");
+                return;
+            }
+        } catch (err) {
+            console.error("Error uploading file:", err);
+            return;
+        }
+
+        const { data, error } = await actions.entrada.addEntry({
+            idproveedor: parseInt(proveedor),
+            idusuario: 1,
+            receipt_type: tipo,
+            receipt_number: parseInt(numero),
+            image: uploadUrl,
+            entry_date: fecha,
+            purchase_total: purchase_total,
+        });
+
+        if (error) {
+            console.error(error);
+            return;
+        }
+
+        console.log("Entrada agregada exitosamente");
+
+        const idEntrada = data?.identrada;
+
+        for (const product of products) {
+            const { data: dataEntryDetail, error: errorEntryDetail } =
+                await actions.entrada.addEntryDetail({
+                    identrada: idEntrada,
+                    idarticulo: parseInt(product.id ?? "0"),
+                    cantidad: parseInt(product.qty ?? "0"),
+                    purchase_price: parseInt(product.price ?? "0"),
+                    sale_price: parseInt(product.salePrice ?? "0"),
+                });
+
+            if (errorEntryDetail) {
+                console.error(errorEntryDetail);
+                return;
+            }
+
+            console.log("Detalle de entrada agregado exitosamente");
+        }
+    });
 </script>
