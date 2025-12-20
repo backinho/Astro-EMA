@@ -37,7 +37,7 @@ export async function addEntry(idproveedor: number, idusuario: number, receipt_t
 
 export async function addEntryDetail(identrada: number, idarticulo: number, cantidad: number, purchase_price: number, sale_price: number) {
     const { data, error } = await supabase
-        .from('entrada_detalle')
+        .from('articulo_entrada')
         .insert({
             identrada: identrada,
             idarticulo: idarticulo,
@@ -45,14 +45,14 @@ export async function addEntryDetail(identrada: number, idarticulo: number, cant
             purchase_price: purchase_price,
             sale_price: sale_price,
         })
-        .select('identrada_detalle')
+        .select('idarticulo_entrada')
 
     if (error) {
         console.error('Error al agregar el detalle de la entrada:', error);
         return { data: null, error };
     }
 
-    return { data: data[0].identrada_detalle, error: null };
+    return { data: data[0].idarticulo_entrada, error: null };
 }
 
 export async function getSuppliers() {

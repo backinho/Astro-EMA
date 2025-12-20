@@ -365,8 +365,6 @@
             return;
         }
 
-        console.log("Añadiendo producto:", product);
-
         list.innerHTML = product
             .map((products) => {
                 const imageUrl = products.image;
@@ -610,6 +608,8 @@
             return;
         }
 
+        console.log(proveedor, tipo, numero, fecha, uploadUrl, purchase_total);
+
         const { data, error } = await actions.entrada.addEntry({
             idproveedor: parseInt(proveedor),
             idusuario: 1,
@@ -629,14 +629,17 @@
 
         const idEntrada = data?.identrada;
 
+        console.log(idEntrada);
+
         for (const product of products) {
+            console.log(product);
             const { data: dataEntryDetail, error: errorEntryDetail } =
                 await actions.entrada.addEntryDetail({
-                    identrada: idEntrada,
                     idarticulo: parseInt(product.id ?? "0"),
+                    identrada: parseInt(idEntrada ?? "0"),
                     cantidad: parseInt(product.qty ?? "0"),
-                    purchase_price: parseInt(product.price ?? "0"),
-                    sale_price: parseInt(product.salePrice ?? "0"),
+                    purchase_price: parseFloat(product.price ?? "0"),
+                    sale_price: parseFloat(product.salePrice ?? "0"),
                 });
 
             if (errorEntryDetail) {
