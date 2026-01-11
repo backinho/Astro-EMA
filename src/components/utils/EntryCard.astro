@@ -1,31 +1,416 @@
 <div
-    id="entry-grid"
-    class="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"
+  id="entry-grid"
+  class="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-(--spacing-lg) mb-(--spacing-2xl)"
 >
-    <h1>TODOOOO MAI BRODEERR</h1>
 </div>
 
 <script>
-    import { actions } from "astro:actions";
+  import { actions } from "astro:actions";
 
-    const entries = await actions.entrada.getEntries();
+  const entries = await actions.entrada.getEntries();
 
-    const entry = entries.data?.data || [];
+  const entry = entries.data?.data || [];
 
-    console.log("Entries obtenidos:", entry);
+  console.log("Entries obtenidos:", entry);
 
-    //renderEntries(entry || []);
+  renderEntries(entry || []);
 
-    interface Entry {
-        identrada: number;
-        fecha: string;
-        articulo_entrada: ArticuloEntrada[];
+  interface Entry {
+    identrada: number;
+    entry_date: Date;
+    receipt_type: string;
+    receipt_number: number;
+    purchase_total: number;
+    articulo_entrada: ArticuloEntrada[];
+    proveedor: Proveedor;
+  }
+
+  interface ArticuloEntrada {
+    articulo: Articulo;
+    idarticulo_entrada: number;
+    idarticulo: number;
+    cantidad: number;
+    purchase_price: number;
+    sale_price: number;
+  }
+
+  interface Proveedor {
+    idpersona: number;
+    nombre: string;
+    tipo_documento: string;
+    nro_documento: number;
+  }
+
+  interface Articulo {
+    code: string;
+    description: string;
+    name: string;
+    price: number;
+    stock: number;
+  }
+
+  function formatDate(dateString: Date) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("es-ES", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+
+  function renderEntries(entries: Entry[]) {
+    const grid = document.getElementById("entry-grid") as HTMLDivElement;
+
+    if (!grid) {
+      console.error("No se encontró el elemento con el ID 'entry-grid");
+      return;
     }
 
-    interface ArticuloEntrada {
-        idarticulo_entrada: number;
-        idarticulo: number;
-        cantidad: number;
-        precio: number;
+    if (!entries || entries.length === 0) {
+      grid.innerHTML = `
+                    <div class="no-products">
+                        <svg class="no-products-icon" fill="none" stroke="currentColor"  xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="-1 -1 27 27" preserveAspectRatio="xMidYMid meet">
+                            <path d="m24.008,23.3l-6.598-6.597c1.607-1.775,2.596-4.12,2.596-6.697C20.006,4.492,15.52.006,10.006.006S.006,4.492.006,10.006s4.486,10,10,10c2.577,0,4.922-.989,6.697-2.596l6.598,6.597.707-.707ZM1.006,10.006C1.006,5.043,5.043,1.006,10.006,1.006s9,4.038,9,9-4.037,9-9,9S1.006,14.968,1.006,10.006Zm12.947-3.252l-3.247,3.246,3.247,3.246-.707.707-3.247-3.246-3.247,3.246-.707-.707,3.247-3.246-3.247-3.246.707-.707,3.247,3.246,3.247-3.246.707.707Z"/>
+                        </svg>
+                        <h3>No se encontraron entradas</h3>
+                        <p>Prueba ajustando los filtros o agrega un nuevo producto.</p>
+                    </div>
+                `;
+      return;
     }
+
+    grid.innerHTML = entries
+      .map((entry) => {
+        if (!entry) return "";
+
+        console.log(entry);
+        return `
+        <div class="entry-card" data-entry-id="${entry.identrada}">
+            <div class="entry-header">
+                <div class="entry-info">
+                    <h3 class="entry-supplier">${entry.proveedor?.nombre || "Sin proveedor"}</h3>
+                    <p class="entry-date">${formatDate(entry.entry_date)}</p>
+                </div>
+                <div class="entry-status status-completado">
+                    Completado
+                </div>
+            </div>
+            
+            <div class="entry-receipt">
+                <div class="receipt-info">
+                    <span class="receipt-type">${entry.receipt_type}</span>
+                    <span class="receipt-number">${entry.receipt_number}</span>
+                </div>
+            </div>
+
+            <div class="entry-items">
+                <div class="items-summary">
+                    <span>${entry.articulo_entrada.length} producto(s)</span>
+                </div>
+                <div class="items-list">
+                  ${entry.articulo_entrada
+                    .slice(0, 2) // Primero cortamos los primeros 2 elementos del arreglo principal [cite: 17]
+                    .map((item) => {
+                      // Accedemos al primer elemento del arreglo 'articulo' dentro de cada entrada
+                      const product = item.articulo;
+                      return `
+                        <div class="entry-item">
+                          <div class="item-info">
+                            <div class="item-name">${product?.name || "Sin nombre"}</div>
+                            <div class="item-details">Cant: ${item.cantidad}</div>
+                          </div>
+                          <div class="item-total">$${(item.purchase_price * item.cantidad).toFixed(2)}</div>
+                        </div>
+                      `;
+                    })
+                    .join("")}
+                  ${
+                    entry.articulo_entrada.length > 2
+                      ? `<div class="entry-item">
+                            <div class="item-info">
+                                <div class="item-name">... y ${entry.articulo_entrada.length - 2} más</div>
+                            </div>
+                        </div>`
+                      : ""
+                  }
+                </div>
+            </div>
+
+            <div class="sale-footer">
+                <div class="sale-total">$${Number(entry.purchase_total).toFixed(2)}</div>
+                <div class="sale-actions">
+                    <button class="action-btn view-btn" onclick="viewEntryDetails(${entry.identrada})" data-tooltip="Ver detalles">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteEntry(${entry.identrada})" data-tooltip="Eliminar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="3,6 5,6 21,6"></polyline>
+                            <path d="M19,6V20a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6M8,6V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+      `;
+      })
+      .join("");
+  }
 </script>
+
+<style is:global>
+  .entry-card {
+    background: var(--bg-primary);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: all var(--transition-fast);
+    position: relative;
+    padding: var(--spacing-lg);
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .entry-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .entry-items {
+    flex: 1;
+  }
+
+  .sale-footer {
+    margin-top: auto;
+  }
+
+  .entry-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+  }
+
+  .entry-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      var(--accent-color)
+    );
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .entry-supplier {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .entry-date {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .entry-status {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-completado {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+  }
+
+  .status-pendiente {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+  }
+
+  .status-cancelado {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+  }
+
+  .entry-receipt {
+    padding-top: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .receipt-info {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .receipt-type {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .receipt-number {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+  }
+
+  .receipt-image {
+    margin-top: var(--spacing-sm);
+  }
+
+  .receipt-image img {
+    width: 60px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+  }
+
+  .receipt-image img:hover {
+    transform: scale(1.1);
+  }
+
+  .sale-items {
+    margin-bottom: var(--spacing-md);
+    flex: 1;
+  }
+
+  .items-summary {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .items-list {
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  .sale-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .sale-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-info {
+    flex: 1;
+  }
+
+  .item-name {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .item-details {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .item-total {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .sale-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+  }
+
+  .sale-total {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .sale-actions {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .action-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+  }
+
+  .view-btn {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .view-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: scale(1.05);
+  }
+
+  .edit-btn {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+
+  .edit-btn:hover {
+    background: rgba(245, 158, 11, 0.2);
+    transform: scale(1.05);
+  }
+
+  .delete-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--error-color);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  .delete-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: scale(1.05);
+  }
+</style>

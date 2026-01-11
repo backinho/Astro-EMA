@@ -3,7 +3,12 @@ import { supabase } from "../../supabase";
 export async function getEntries() {
     const { data: entries, error } = await supabase
         .from('entrada')
-        .select('*, articulo_entrada(*, articulo(*))');
+        .select(`
+            *,
+            articulo_entrada(*, articulo(*) ),
+            proveedor:personas!entrada_idproveedor_fkey(*),
+            usuario:personas!entrada_idusuario_fkey(*)
+        `);
 
     if (error) {
         console.error('Error al obtener las entradas:', error);
